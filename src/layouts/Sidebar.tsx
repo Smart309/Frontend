@@ -54,7 +54,7 @@ export const SlideBarItems = [
   },
   {
     id: 6,
-    icon: <ErrorIcon sx={{ fontSize: 22, color: red[500] }} />,
+    icon: <ErrorIcon sx={{ fontSize: 22 }} />,
     name: "Alerts",
     path: "/alerts",
     newIcon: "",
@@ -89,7 +89,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
             backgroundColor:
               location.pathname === item.path ||
               (item.name === "Dashboard" && location.pathname.includes("-"))
-                ? "#FF4E4E"
+                ? "#F25A28"
                 : "transparent",
             color:
               location.pathname === item.path ||

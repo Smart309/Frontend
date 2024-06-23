@@ -28,7 +28,7 @@ const MobileLayout = () => {
       <AppBar
         component="nav"
         sx={{
-          backgroundColor: "#FF4E4E",
+          backgroundColor: "#F25A28",
           color: "#FFFFFB",
         }}
       >

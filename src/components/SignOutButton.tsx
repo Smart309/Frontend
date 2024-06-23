@@ -11,10 +11,10 @@ export const SignOutButton = () => {
         fontWeight: 300,
         "&:focus": {
           outline: "none",
-          color: "#FF4E4E",
+          color: "#F25A28",
         },
         "&:hover": {
-          color: "#FF4E4E",
+          color: "#F25A28",
         },
       }}
     >
