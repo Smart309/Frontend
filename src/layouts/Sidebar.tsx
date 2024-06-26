@@ -96,7 +96,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                 : "#242D5D",
             "&:hover": {
               backgroundColor:
-                location.pathname !== item.path ? "#FFD7C9" : "F25A28",
+                location.pathname !== item.path ? "#FFEAE3" : "F25A28",
             },
           }}
         >
