@@ -35,7 +35,7 @@ const ContactUs = () => {
       >
         <Box
           sx={{
-            backgroundColor: "#FFFFFB",
+            backgroundColor: "#EBF1FF",
             flex: 1,
             display: "flex",
             borderRadius: 8,
@@ -64,8 +64,7 @@ const ContactUs = () => {
               height: "auto",
               borderRadius: "25px",
               pt: 5,
-              background:
-                "linear-gradient(180deg, rgba(2,0,36,1) 0%, rgba(240,138,152,1) 0%, rgba(140,111,230,1) 100%)", // Add gradient background
+              
             }}
           >
             <Box
@@ -74,37 +73,12 @@ const ContactUs = () => {
                 width: "100%",
                 height: "auto",
                 borderRadius: "25px",
+                mt : "-80px",
               }}
               alt="Contact Us"
               src="./ContactUs.png"
             />
-            <Box
-              component="img"
-              sx={{
-                position: "absolute", // Position the additional image absolutely
-                bottom: "80%", // Adjust as needed
-                left: "29%", // Adjust as needed
-                width: "15%", // Adjust size as needed
-                height: "auto", // Adjust size as needed
-                zIndex: 1, // Ensure it's below the other image
-              }}
-              alt="Book and Folder"
-              src="./book.svg"
-            />
           </Box>
-          <Box
-            component="img"
-            sx={{
-              position: "absolute", // Position the additional image absolutely
-              bottom: "72%", // Adjust as needed
-              right: "26%", // Adjust as needed
-              width: "10%", // Adjust size as needed
-              height: "auto", // Adjust size as needed
-              zIndex: 1, // Ensure it's below the other image
-            }}
-            alt="Book and Folder"
-            src="./folder.svg"
-          />
         </Box>
       </Box>
     </>

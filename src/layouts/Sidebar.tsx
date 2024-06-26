@@ -11,6 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 
 interface SidebarProps {
   isHideSidebar: boolean;
+  toggleSidebar: () => void;
 }
 
 export const SlideBarItems = [
@@ -96,23 +97,35 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                 : "#242D5D",
             "&:hover": {
               backgroundColor:
-                location.pathname !== item.path ? "#FFEAE3" : "F25A28",
+                location.pathname !== item.path ? "#FFEAE3" : "#F25A28",
             },
+            transition: "background-color 0.3s ease",
           }}
         >
-          {item.icon}
-          {!isHideSidebar && windowSize.width >= 1100 && (
-            <Typography
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {item.icon}
+            <Box
               sx={{
-                marginLeft: "30px",
-                fontSize: 16,
-                fontWeight: 500,
-                paddingRight: 1,
+                overflow: "hidden",
+                maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
+                transition: "max-width 0.5s ease",
               }}
             >
-              {item.name}
-            </Typography>
-          )}
+              <Typography
+                sx={{
+                  marginLeft: "30px",
+                  fontSize: 16,
+                  fontWeight: 500,
+                  paddingRight: 1,
+                  whiteSpace: "nowrap",
+                  opacity: !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                  transition: "opacity 0.5s ease",
+                }}
+              >
+                {item.name}
+              </Typography>
+            </Box>
+          </Box>
           {item.newIcon && <span>{item.newIcon}</span>}
         </Box>
       ))}

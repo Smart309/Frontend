@@ -1,69 +1,69 @@
-import ContactUsComponent from "../components/ContactUsComponent";
-import useWindowSize from "../hooks/useWindowSize";
-import { Box, Typography } from "@mui/material";
 
-const ContactUs = () => {
-  const windowSize = useWindowSize();
+// import useWindowSize from "../hooks/useWindowSize";
+// import { Box, Typography } from "@mui/material";
 
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        minHeight: "100vh", // Ensure full viewport height
-        backgroundImage: `url('/ContactUs.png')`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        padding: 2, // Add padding for spacing
-      }}
-    >
-      {windowSize.width > 600 && (
-        <Typography
-          variant="h4"
-          component="h1"
-          fontWeight={600}
-          color="#242D5D"
-          sx={{ marginTop: 5 }}
-        >
-          CONTACT US
-        </Typography>
-      )}
+// const ContactUsComponent = () => {
+//   const windowSize = useWindowSize();
 
-      <Box
-        sx={{
-          width: "100%",
-          backgroundColor: "#FFFFFB",
-          borderRadius: 8,
-          marginTop: 2,
-          padding: 3,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {windowSize.width < 1100 && (
-          <Typography
-            variant="h5"
-            component="p"
-            sx={{
-              color: "#242D5D",
-              fontWeight: 400,
-              fontSize: 25,
-              marginBottom: 3,
-            }}
-          >
-            Contact us for any queries.
-          </Typography>
-        )}
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         flexDirection: "column",
+//         alignItems: "center",
+//         minHeight: "100vh", // Ensure full viewport height
+//         backgroundImage: `url('/ContactUs.png')`,
+//         backgroundSize: "cover",
+//         backgroundRepeat: "no-repeat",
+//         backgroundPosition: "center",
+//         padding: 2, // Add padding for spacing
+//       }}
+//     >
+//       {windowSize.width > 600 && (
+//         <Typography
+//           variant="h4"
+//           component="h1"
+//           fontWeight={600}
+//           color="#242D5D"
+//           sx={{ marginTop: 5 }}
+//         >
+//           CONTACT US
+//         </Typography>
+//       )}
 
-        <ContactUsComponent />
-      </Box>
-    </Box>
-  );
-};
+//       <Box
+//         sx={{
+//           width: "100%",
+//           backgroundColor: "#FFFFFB",
+//           borderRadius: 8,
+//           marginTop: 2,
+//           padding: 3,
+//           display: "flex",
+//           flexDirection: "column",
+//           alignItems: "center",
+//           textAlign: "center",
+//           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+//         }}
+//       >
+//         {windowSize.width < 1100 && (
+//           <Typography
+//             variant="h5"
+//             component="p"
+//             sx={{
+//               color: "#242D5D",
+//               fontWeight: 400,
+//               fontSize: 25,
+//               marginBottom: 3,
+//             }}
+//           >
+//             Contact us for any queries.
+//           </Typography>
+//         )}
 
-export default ContactUs;
+//         <ContactUsComponent />
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default ContactUsComponent;

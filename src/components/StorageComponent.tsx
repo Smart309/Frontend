@@ -4,11 +4,11 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import StorageIcon from "@mui/icons-material/Storage";
 
 const StorageComponent = () => {
-  const [showStorage, setShowStorage] = useState(false);
+  // const [showStorage, setShowStorage] = useState(false);
 
-  const handleClick = () => {
-    setShowStorage(!showStorage);
-  };
+  // const handleClick = () => {
+  //   setShowStorage(!showStorage);
+  // };
 
   return (
     <>
@@ -20,16 +20,16 @@ const StorageComponent = () => {
           alignItems: "start",
           width: "100%",
           mt: 2,
-          cursor: "pointer", // Add cursor pointer for click interaction
+          //cursor: "pointer", // Add cursor pointer for click interaction
         }}
-        onClick={handleClick} // Toggle visibility on click
+        //onClick={handleClick} // Toggle visibility on click
       >
         <AddBoxIcon sx={{ backgroundColor: "black", color: "white", ml: 2 }} />
         <Typography sx={{ ml: 2, mb: 1, fontSize: "18px" }}>
           Aiven cloud
         </Typography>
       </Grid>
-      {showStorage && (
+      
         <Box
           sx={{
             display: "flex",
@@ -42,7 +42,6 @@ const StorageComponent = () => {
             cpesiren-cmu-dsng.h.aivencloud.com
           </Typography>
         </Box>
-      )}
     </>
   );
 };
