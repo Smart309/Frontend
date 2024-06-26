@@ -62,7 +62,7 @@ export const SlideBarItems = [
     id: 7,
     icon: <PeopleAltOutlinedIcon sx={{ fontSize: 20 }} />,
     name: "Contact Us",
-    path: "/contact",
+    path: "/contactus",
     newIcon: "",
   },
 ];
