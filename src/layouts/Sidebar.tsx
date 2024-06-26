@@ -13,7 +13,6 @@ interface SidebarProps {
   isHideSidebar: boolean;
 }
 
-// Define newIcon as JSX.Element type
 export const SlideBarItems = [
   {
     id: 0,
@@ -95,6 +94,9 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               (item.name === "Dashboard" && location.pathname.includes("-"))
                 ? "#FFFFFB"
                 : "#242D5D",
+            "&:hover": {
+              backgroundColor: location.pathname !== item.path && "#FFCAB8",
+            },
           }}
         >
           {item.icon}
