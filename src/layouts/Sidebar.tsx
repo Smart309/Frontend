@@ -3,7 +3,6 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ErrorIcon from "@mui/icons-material/Error";
 import useWindowSize from "../hooks/useWindowSize";
-import { red } from "@mui/material/colors";
 import { useNavigate, useLocation } from "react-router";
 import DnsIcon from "@mui/icons-material/Dns";
 import CottageIcon from "@mui/icons-material/Cottage";

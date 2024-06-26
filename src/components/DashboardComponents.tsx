@@ -1,6 +1,6 @@
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 
-const DashboardComponents = () => {
+const DevicesComponents = () => {
   return (
     <Box sx={{ maxWidth: 800, width: 1 }}>
       <Box
@@ -18,4 +18,4 @@ const DashboardComponents = () => {
     </Box>
   );
 };
-export default DashboardComponents;
+export default DevicesComponents;
