@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent";
@@ -62,7 +62,8 @@ const DeviceDetail = () => {
           sx={{
             width: 1,
             display: "flex",
-            justifyContent: "flex-start",
+            justifyContent: "space-between", // เปลี่ยนจาก flex-start เป็น space-between เพื่อให้ปุ่มชิดขวา
+            alignItems: "center",
             marginBottom: 3,
           }}
         >
@@ -74,7 +75,30 @@ const DeviceDetail = () => {
           >
             INTERFACE
           </Typography>
+          <Button
+            type="submit"
+            sx={{
+              color: "#FFFFFB",
+              backgroundColor: "#F25A28",
+              fontSize: "1rem",
+              fontWeight: 600,
+              borderRadius: "70px",
+              width: "5.5rem",
+              height: "2.5rem",
+              "&:focus": {
+                outline: "none",
+                color: "#FFFFFB",
+              },
+
+              "&:hover": {
+                backgroundColor: "#F37E58",
+              },
+            }}
+          >
+            Graph
+          </Button>
         </Box>
+
         <Box
           sx={{
             backgroundColor: "#FFFFFB",
