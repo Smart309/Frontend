@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography, Divider, Grid } from "@mui/material";
-import axios from "axios"; // You'll need to install axios: npm install axios
-
-interface DeviceData {
-  DMACaddress: string;
-  DName: string | null;
-  Location: string | null;
-  Hardware: string | null;
-  Os: string | null;
-  Type: string | null;
-  Vendor: string | null;
-  Room: string | null;
-  Status: boolean;
-}
+import { getDeviceData } from "../../../api/DeviceDetailApi";
 
 const DeviceDetailComponent = () => {
-  const [deviceData, setDeviceData] = useState<DeviceData | null>(null);
+  const [deviceData, setDeviceData] = useState<IDevice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        const response = await axios.get<DeviceData[]>("http://localhost:3000/getDevice");
-        if (response.data.length > 0) {
-          setDeviceData(response.data[0]); // Get the first device for now
-        } else {
-          setError("No devices found");
-        }
-        setLoading(false);
+        const device = await getDeviceData();
+        setDeviceData(device);
       } catch (error) {
-        console.error("Error fetching device data:", error);
-        setError("Failed to fetch device data. Please try again later.");
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
         setLoading(false);
       }
     };
@@ -50,6 +37,7 @@ const DeviceDetailComponent = () => {
   if (!deviceData) {
     return <div>No device data available.</div>;
   }
+
   return (
     <>
       <Box
@@ -110,7 +98,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                 {deviceData.Hardware || "Unknown Hardware"}
+                  {deviceData.Hardware || "Unknown Hardware"}
                 </Typography>
               </Grid>
             </Grid>
@@ -137,7 +125,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-            {deviceData.Os || "Unknown Os"}
+                  {deviceData.Os || "Unknown Os"}
                 </Typography>
               </Grid>
             </Grid>
@@ -272,7 +260,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  {deviceData.Status || "Unknown Status"}
+                  {deviceData.Status ? "Active" : "Inactive"}
                 </Typography>
               </Grid>
             </Grid>
