@@ -1,6 +1,55 @@
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Divider, Grid } from "@mui/material";
+import axios from "axios"; // You'll need to install axios: npm install axios
+
+interface DeviceData {
+  DMACaddress: string;
+  DName: string | null;
+  Location: string | null;
+  Hardware: string | null;
+  Os: string | null;
+  Type: string | null;
+  Vendor: string | null;
+  Room: string | null;
+  Status: boolean;
+}
 
 const DeviceDetailComponent = () => {
+  const [deviceData, setDeviceData] = useState<DeviceData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      try {
+        const response = await axios.get<DeviceData[]>("http://localhost:3000/getDevice");
+        if (response.data.length > 0) {
+          setDeviceData(response.data[0]); // Get the first device for now
+        } else {
+          setError("No devices found");
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching device data:", error);
+        setError("Failed to fetch device data. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchDeviceData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!deviceData) {
+    return <div>No device data available.</div>;
+  }
   return (
     <>
       <Box
@@ -18,7 +67,7 @@ const DeviceDetailComponent = () => {
           color={"#242D5D"}
           sx={{ fontSize: "1.5rem", textAlign: "left" }}
         >
-          Device one
+          {deviceData.DName || "Unknown Device"}
         </Typography>
       </Box>
 
@@ -61,8 +110,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  CISCO1905/K9 (C1905 Router, 2 GE, HWIC-1T, CAB-SS-V35MT,
-                  256F/256D, IPBase)
+                 {deviceData.Hardware || "Unknown Hardware"}
                 </Typography>
               </Grid>
             </Grid>
@@ -89,7 +137,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  Ubuntu 20.04
+            {deviceData.Os || "Unknown Os"}
                 </Typography>
               </Grid>
             </Grid>
@@ -116,7 +164,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  Router
+                  {deviceData.Type || "Unknown Type"}
                 </Typography>
               </Grid>
             </Grid>
@@ -143,7 +191,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  CISCO
+                  {deviceData.Vendor || "Unknown Vendor"}
                 </Typography>
               </Grid>
             </Grid>
@@ -170,7 +218,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  30's Building
+                  {deviceData.Location || "Unknown Location"}
                 </Typography>
               </Grid>
             </Grid>
@@ -197,7 +245,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  401
+                  {deviceData.Room || "Unknown Room"}
                 </Typography>
               </Grid>
             </Grid>
@@ -213,7 +261,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  Uptime
+                  Status
                 </Typography>
               </Grid>
               <Grid item xs={9}>
@@ -224,7 +272,7 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  10 hours 23 minutes 56 seconds
+                  {deviceData.Status || "Unknown Status"}
                 </Typography>
               </Grid>
             </Grid>
