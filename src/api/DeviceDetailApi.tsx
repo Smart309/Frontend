@@ -1,17 +1,16 @@
 import axios from "axios";
+<<<<<<< HEAD
 import { IDevice } from "../interface/IDevice";
 // import { IDevice } from "../interface/IDevice";
+=======
+>>>>>>> feature/Devices
 
-const getDeviceData = async (): Promise<IDevice | null> => {
+const getDeviceData = async (): Promise<IDevice[]> => {
   try {
     const response = await axios.get<IDevice[]>(
       "http://localhost:3000/getDevice"
     );
-    if (response.data.length > 0) {
-      return response.data[0]; // Get the first device for now
-    } else {
-      throw new Error("No devices found");
-    }
+    return response.data;
   } catch (error) {
     console.error("Error fetching device data:", error);
     throw new Error("Failed to fetch device data. Please try again later.");
