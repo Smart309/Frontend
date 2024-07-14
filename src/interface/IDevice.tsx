@@ -16,7 +16,7 @@ export interface IInterface {
   ipAddress: string | null;
   speed: number;
   status: boolean;
-  DMACaddress: string | null;
+  DMACaddress: string;
 }
 
 export interface IAlert {
@@ -28,4 +28,21 @@ export interface IAlert {
   endDate: string;
   startTime: string;
   endTime: string;
+}
+
+export interface IUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isAdmin: boolean;
+  password: string;
+  role: string;
+}
+
+export interface IGraph {
+  GID: String;
+  DMACaddress: string;
+  name: string | null;
+  detail: string | null;
 }
