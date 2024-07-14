@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -9,31 +10,34 @@ import {
   IconButton,
   Typography,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React, { useState } from "react";
-
-// Function to create sample data rows
-function createData(Time: Date, Problem: string, Area: string) {
-  return { Time, Problem, Area };
-}
-
-const rows = [
-  createData(
-    new Date(2021, 10, 25, 12, 0, 0),
-    "Traffic overload",
-    "Device One"
-  ),
-  createData(
-    new Date(2021, 10, 25, 12, 0, 0),
-    "Traffic overload",
-    "Device One"
-  ),
-];
+import { getAlertData } from "../api/AlertApi"; // Adjust this import based on your file structure
+import { IAlert } from "../interface/IDevice"; // Adjust this import based on your file structure
 
 const AlertsComponent = () => {
+  const [alerts, setAlerts] = useState<IAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const fetchedAlerts = await getAlertData();
+        setAlerts(fetchedAlerts);
+      } catch (err) {
+        setError("Failed to fetch alerts");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAlerts();
+  }, []);
 
   const handleSearchClick = () => {
     setSearching(true);
@@ -49,17 +53,25 @@ const AlertsComponent = () => {
     setSnackbarOpen(false);
   };
 
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Typography color="error">Error: {error}</Typography>;
+  }
+
   return (
-    <TableContainer 
-      component={Paper} 
-      sx={{ 
+    <TableContainer
+      component={Paper}
+      sx={{
         boxShadow: 'none',
         '& .MuiPaper-root': { boxShadow: 'none' },
         backgroundColor: 'transparent'
       }}
     >
-      <Table 
-        sx={{ 
+      <Table
+        sx={{
           minWidth: 650,
           '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
           '& .MuiTableCell-root': { borderBottom: 'none' },
@@ -72,8 +84,8 @@ const AlertsComponent = () => {
               cursor: 'pointer', 
             },
           },
-        }} 
-        aria-label="simple table"
+        }}
+        aria-label="alerts table"
       >
         <TableHead>
           <TableRow>
@@ -84,13 +96,11 @@ const AlertsComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
-            <TableRow
-              key={index}
-            >
-              <TableCell>{row.Time.toLocaleString()}</TableCell>
-              <TableCell align="center">{row.Problem}</TableCell>
-              <TableCell align="center">{row.Area}</TableCell>
+          {alerts.map((alert, index) => (
+            <TableRow key={index}>
+              <TableCell>{alert.startTime}</TableCell>
+              <TableCell align="center">{alert.problem}</TableCell>
+              <TableCell align="center">{alert.area}</TableCell>
               <TableCell align="center">
                 <IconButton
                   aria-label="find"
