@@ -50,22 +50,43 @@ const AlertsComponent = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer 
+      component={Paper} 
+      sx={{ 
+        boxShadow: 'none',
+        '& .MuiPaper-root': { boxShadow: 'none' },
+        backgroundColor: 'transparent'
+      }}
+    >
+      <Table 
+        sx={{ 
+          minWidth: 650,
+          '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
+          '& .MuiTableCell-root': { borderBottom: 'none' },
+          '& .MuiTableBody-root .MuiTableRow-root': {
+            '&:nth-of-type(even)': { backgroundColor: 'white' },
+            '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
+            '&:hover': { 
+              backgroundColor: '#FFF3E0', 
+              transition: 'background-color 0.3s ease',
+              cursor: 'pointer', 
+            },
+          },
+        }} 
+        aria-label="simple table"
+      >
         <TableHead>
           <TableRow>
             <TableCell>Time</TableCell>
             <TableCell align="center">Problem</TableCell>
             <TableCell align="center">Area</TableCell>
             <TableCell align="center">Actions</TableCell>
-            {/* Added Actions column header */}
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
             <TableRow
-              key={index} // Use index as key for simplicity (replace with unique ID if available)
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              key={index}
             >
               <TableCell>{row.Time.toLocaleString()}</TableCell>
               <TableCell align="center">{row.Problem}</TableCell>
@@ -80,6 +101,9 @@ const AlertsComponent = () => {
                     borderRadius: "100%",
                     "&:focus": {
                       outline: "none",
+                    },
+                    "&:hover": {
+                      backgroundColor: "darkblue",
                     },
                   }}
                 >

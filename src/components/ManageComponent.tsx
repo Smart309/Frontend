@@ -11,7 +11,6 @@ import {
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Function to create sample data rows
 function createData(
   Vendor: string,
   Name: string,
@@ -30,23 +29,44 @@ const rows = [
 
 const ManageComponent = () => {
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer 
+      component={Paper} 
+      sx={{ 
+        boxShadow: 'none',
+        '& .MuiPaper-root': { boxShadow: 'none' },
+        backgroundColor: 'transparent'
+      }}
+    >
+      <Table 
+        sx={{ 
+          minWidth: 650,
+          '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
+          '& .MuiTableCell-root': { borderBottom: 'none' },
+          '& .MuiTableBody-root .MuiTableRow-root': {
+            '&:nth-of-type(even)': { backgroundColor: 'white' },
+            '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
+            '&:hover': { 
+              backgroundColor: '#FFF3E0', 
+              transition: 'background-color 0.3s ease',
+              cursor: 'pointer', 
+            },
+          },
+        }} 
+        aria-label="simple table"
+      >
         <TableHead>
           <TableRow>
             <TableCell>Vendor</TableCell>
             <TableCell align="center">Name</TableCell>
             <TableCell align="center">Location</TableCell>
             <TableCell align="center">MAC address</TableCell>
-            <TableCell align="center"></TableCell>{" "}
-            {/* Added Actions column header */}
+            <TableCell align="center"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow
-              key={index} // Use index as key for simplicity (replace with unique ID if available)
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            <TableRow sx={{ cursor: 'pointer'}}
+              key={index}
             >
               <TableCell component="th" scope="row">
                 {row.Vendor}
@@ -57,8 +77,8 @@ const ManageComponent = () => {
               <TableCell align="center">
                 <IconButton
                   sx={{
-                    "&:focus": {
-                      outline: "none",
+                    '&:focus': {
+                      outline: 'none',
                     },
                   }}
                   aria-label="edit"
@@ -71,8 +91,8 @@ const ManageComponent = () => {
                 </IconButton>
                 <IconButton
                   sx={{
-                    "&:focus": {
-                      outline: "none",
+                    '&:focus': {
+                      outline: 'none',
                     },
                   }}
                   aria-label="delete"
