@@ -116,6 +116,168 @@ const DeviceDetailComponent = () => {
             </Grid>
           </Grid>
           {/* Add other properties in a similar way */}
+          <Grid item xs={12} sx={{ marginBottom: 2 }}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontWeight="medium"
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Operating System
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Os || "Unknown Os"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ marginBottom: 2 }}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  fontWeight="medium"
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Type
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Type || "Unknown Type"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ marginBottom: 2 }}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontWeight="medium"
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Vendor
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Vendor || "Unknown Vendor"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ marginBottom: 2 }}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontWeight="medium"
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Location
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Location || "Unknown Location"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ marginBottom: 2 }}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  fontWeight="medium"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Room
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Room || "Unknown Room"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontWeight="medium"
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  Status
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography
+                  component="div"
+                  color={"#000000"}
+                  fontSize={18}
+                  paddingBottom={0.5}
+                  sx={{ textAlign: "left" }}
+                >
+                  {deviceData.Status ? "Active" : "Inactive"}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Box>
     </>

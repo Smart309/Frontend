@@ -7,11 +7,10 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Typography,
   Snackbar,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Function to create sample data rows
 function createData(Time: Date, Problem: string, Area: string) {
@@ -50,29 +49,29 @@ const AlertsComponent = () => {
   };
 
   return (
-    <TableContainer 
-      component={Paper} 
-      sx={{ 
-        boxShadow: 'none',
-        '& .MuiPaper-root': { boxShadow: 'none' },
-        backgroundColor: 'transparent'
+    <TableContainer
+      component={Paper}
+      sx={{
+        boxShadow: "none",
+        "& .MuiPaper-root": { boxShadow: "none" },
+        backgroundColor: "transparent",
       }}
     >
-      <Table 
-        sx={{ 
+      <Table
+        sx={{
           minWidth: 650,
-          '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
-          '& .MuiTableCell-root': { borderBottom: 'none' },
-          '& .MuiTableBody-root .MuiTableRow-root': {
-            '&:nth-of-type(even)': { backgroundColor: 'white' },
-            '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
-            '&:hover': { 
-              backgroundColor: '#FFF3E0', 
-              transition: 'background-color 0.3s ease',
-              cursor: 'pointer', 
+          "& .MuiTable-root": { borderCollapse: "separate", borderSpacing: 0 },
+          "& .MuiTableCell-root": { borderBottom: "none" },
+          "& .MuiTableBody-root .MuiTableRow-root": {
+            "&:nth-of-type(even)": { backgroundColor: "white" },
+            "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
+            "&:hover": {
+              backgroundColor: "#FFF3E0",
+              transition: "background-color 0.3s ease",
+              cursor: "pointer",
             },
           },
-        }} 
+        }}
         aria-label="simple table"
       >
         <TableHead>
@@ -85,9 +84,7 @@ const AlertsComponent = () => {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow
-              key={index}
-            >
+            <TableRow key={index}>
               <TableCell>{row.Time.toLocaleString()}</TableCell>
               <TableCell align="center">{row.Problem}</TableCell>
               <TableCell align="center">{row.Area}</TableCell>
