@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IDevice } from "../interface/IDevice";
 // import { IDevice } from "../interface/IDevice";
 
 const getDeviceData = async (): Promise<IDevice | null> => {

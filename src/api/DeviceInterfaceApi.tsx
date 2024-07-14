@@ -1,8 +1,11 @@
 import axios from "axios";
+import { IInterface } from "../interface/IDevice";
 
 const getDeviceINT = async (): Promise<IInterface[]> => {
   try {
-    const response = await axios.get<IInterface[]>("http://localhost:3000/getInterface");
+    const response = await axios.get<IInterface[]>(
+      "http://localhost:3000/getInterface"
+    );
     if (response.data.length > 0) {
       return response.data;
     } else {
