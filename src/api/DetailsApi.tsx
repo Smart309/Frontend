@@ -3,7 +3,6 @@ import { IDetails } from "../interface/IDetails";
 // import { IDevice } from "../interface/IDevice";
 
 const getDetailsData = async (): Promise<IDetails[]> => {
-  // เปลี่ยนประเภทที่ส่งกลับเป็นอาร์เรย์
   try {
     const response = await axios.get<IDetails[]>(
       "http://localhost:3000/getDetails"

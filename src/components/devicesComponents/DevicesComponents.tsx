@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Card, Box, Typography, Grid } from "@mui/material";
+import { Card, Typography, Grid } from "@mui/material";
 import DevicesCard from "./DevicesCard";
-import { IDetails } from "../../interface/IDetails";
-import { getDetailsData } from "../../api/DetailsApi";
+import { getDeviceData } from "../../api/DeviceDetailApi";
 
-const DevicesComponents = ({ location }: { location: string }) => {
-  const [devices, setDevices] = useState<IDetails[]>([]);
+interface DevicesComponentsProps {
+  location: string;
+}
+
+const DevicesComponents: React.FC<DevicesComponentsProps> = ({ location }) => {
+  const [devices, setDevices] = useState<IDevice[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getDetailsData();
-        // Filter devices based on the location
-        setDevices(data.filter((device) => device.Location === location));
+        const data = await getDeviceData();
+        const filteredDevices = data.filter(
+          (device) => device.Location === location
+        );
+        setDevices(filteredDevices);
       } catch (error) {
-        console.error("Error fetching details data:", error);
+        console.error("Error fetching device data:", error);
       }
     };
 
@@ -47,10 +52,12 @@ const DevicesComponents = ({ location }: { location: string }) => {
       >
         {location || "Default Location"}
       </Typography>
-      <Grid container spacing={3} marginTop={0.1} marginBottom={3}>
+      <Grid container spacing={3} marginTop={0} marginBottom={2}>
         {devices.map((device, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-            <DevicesCard />
+          <Grid item key={index}>
+            <DevicesCard
+              device={device} // Pass device object here
+            />
           </Grid>
         ))}
       </Grid>

@@ -3,30 +3,33 @@ import { Button, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
-import { getDetailsData } from "../api/DetailsApi";
-import { IDetails } from "../interface/IDetails";
+import { getDeviceData } from "../api/DeviceDetailApi";
 
-const Devices = () => {
+const Devices: React.FC = () => {
   const windowSize = useWindowSize();
-  const [detailsList, setDetailsList] = useState<IDetails[]>([]);
+  const [deviceList, setDeviceList] = useState<IDevice[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getDetailsData();
-        setDetailsList(data);
+        const data = await getDeviceData();
+        setDeviceList(data); // Set data directly as an array
       } catch (error) {
-        console.error("Error fetching details data:", error);
+        console.error("Error fetching device data:", error);
       }
     };
 
     fetchData();
   }, []);
 
-  // Extract unique locations
+  // Extract unique locations and filter out null values
   const uniqueLocations = Array.from(
-    new Set(detailsList.map((detail) => detail.Location).filter((loc) => loc))
-  ).filter((loc): loc is string => loc !== null); // Ensure all locations are strings
+    new Set(
+      deviceList
+        .map((device) => device.Location)
+        .filter((loc): loc is string => loc !== null)
+    )
+  );
 
   return (
     <>
@@ -77,7 +80,6 @@ const Devices = () => {
           marginTop: 2,
           height: "auto",
           display: "flex",
-          flexDirection: "column", // Arrange items vertically
         }}
       >
         <Grid container spacing={3} justifyContent="flex-start" marginTop={2}>
