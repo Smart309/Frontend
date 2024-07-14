@@ -1,48 +1,65 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { Grid, Typography } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Grid, Typography, Table, TableBody, TableCell, TableHead, TableRow, Box } from "@mui/material";
+import { getDeviceINT } from "../../../api/DeviceInterfaceApi";
 
-function Data(
-  Interface: string,
-  IPAddress: string,
-  Speed: string,
-  Status: string
-) {
-  return { Interface, IPAddress, Speed, Status };
+interface DeviceInterfaceComponentProps {
+  DMACaddress: string;
 }
 
-const rows = [
-  Data("Vlan0", "10.10.127.0", "10 Mbps", "Up"),
-  Data("Ethernet 0/1", "10.10.127.1", "1 Gbps", "Up"),
-  Data("Ethernet 0/2", "10.10.127.3", "10 Mbps", "Down"),
-  Data("Vlan1", "10.10.127.5", "10 Mbps", "Up"),
-];
+const DeviceInterfaceComponent = ({ DMACaddress }: DeviceInterfaceComponentProps) => {
+  const [deviceINT, setDeviceINT] = useState<IInterface[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const DeviceInterfaceComponent = () => {
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      try {
+        const data = await getDeviceINT();
+        setDeviceINT(data.filter((interfaceData) => interfaceData.DMACaddress === DMACaddress));
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeviceData();
+  }, [DMACaddress]);
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error: {error}</Typography>;
+  }
+
   return (
+  <>
     <Grid container sx={{ width: "95%" }}>
       <Table sx={{ minWidth: 650 }} aria-label="Interface table">
         <TableHead>
           <TableRow>
             <TableCell>
               <Typography
-                variant="h6"
+              variant="h6"
                 component="div"
                 color={"#242D5D"}
-                sx={{ fontSize: "1.5rem" }}
+                sx={{ fontSize: "1.3rem" }}
               >
                 Interface
               </Typography>
             </TableCell>
             <TableCell>
               <Typography
-                variant="h6"
+              variant="h6"
                 component="div"
                 color={"#242D5D"}
-                sx={{ fontSize: "1.5rem", textAlign: "center" }}
+                sx={{ fontSize: "1.3rem", textAlign: "center" }}
               >
                 IP
               </Typography>
@@ -52,7 +69,7 @@ const DeviceInterfaceComponent = () => {
                 variant="h6"
                 component="div"
                 color={"#242D5D"}
-                sx={{ fontSize: "1.5rem", textAlign: "center" }}
+                sx={{ fontSize: "1.3rem", textAlign: "center" }}
               >
                 Speed
               </Typography>
@@ -62,7 +79,7 @@ const DeviceInterfaceComponent = () => {
                 variant="h6"
                 component="div"
                 color={"#242D5D"}
-                sx={{ fontSize: "1.5rem", textAlign: "center" }}
+                sx={{ fontSize: "1.3rem", textAlign: "center" }}
               >
                 Status
               </Typography>
@@ -70,32 +87,33 @@ const DeviceInterfaceComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {deviceINT?.map((interfaceData) => (
             <TableRow
-              key={row.Interface}
+              key={interfaceData.ImacAddress}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
                 <Typography sx={{ fontSize: "18px" }}>
-                  {row.Interface}
+                  {interfaceData.Intname}
                 </Typography>
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
                 <Typography sx={{ fontSize: "18px" }}>
-                  {row.IPAddress}
+                  {interfaceData.ipAddress}
                 </Typography>
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
-                <Typography sx={{ fontSize: "18px" }}>{row.Speed}</Typography>
+                <Typography sx={{ fontSize: "18px" }}>{`${interfaceData.speed} Mbps`}</Typography>
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
-                <Typography sx={{ fontSize: "18px" }}>{row.Status}</Typography>
+                <Typography sx={{ fontSize: "18px" }}>{interfaceData.status ? 'Up' : 'Down'}</Typography>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </Grid>
+    </>
   );
 };
 

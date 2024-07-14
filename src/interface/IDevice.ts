@@ -1,11 +1,20 @@
 interface IDevice {
   DMACaddress: string;
-  DName: string | null;
-  Location: string | null;
-  Hardware: string | null;
-  Os: string | null;
-  Type: string | null;
-  Vendor: string | null;
-  Room: string | null;
-  Status: boolean;
+  Dname: string | null;
+  location: string | null;
+  hardware: string | null;
+  os: string | null;
+  type: string | null;
+  vendor: string | null;
+  room: string | null;
+  status: boolean;
+}
+
+interface IInterface {
+  ImacAddress: string;
+  Intname: string | null;
+  ipAddress: string | null;
+  speed: number;
+  status: boolean;
+  DMACaddress: string | null;
 }

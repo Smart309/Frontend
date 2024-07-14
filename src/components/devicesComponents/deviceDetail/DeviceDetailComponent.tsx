@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Divider, Grid } from "@mui/material";
 import { getDeviceData } from "../../../api/DeviceDetailApi";
+import DeviceInterfaceComponent from "./DeviceInterfaceComponent"; // Adjust the import path as necessary
 
 const DeviceDetailComponent = () => {
   const [deviceData, setDeviceData] = useState<IDevice | null>(null);
@@ -55,7 +56,7 @@ const DeviceDetailComponent = () => {
           color={"#242D5D"}
           sx={{ fontSize: "1.5rem", textAlign: "left" }}
         >
-          {deviceData.DName || "Unknown Device"}
+          {deviceData.Dname || "Unknown Device"}
         </Typography>
       </Box>
 
@@ -76,197 +77,76 @@ const DeviceDetailComponent = () => {
         }}
       >
         <Grid container sx={{ width: "90%" }}>
-          <Grid item xs={12} sx={{ marginBottom: 2, marginTop: 1.5 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  fontWeight="medium"
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Hardware
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Hardware || "Unknown Hardware"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ marginBottom: 2 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontWeight="medium"
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Operating System
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Os || "Unknown Os"}
-                </Typography>
+          {[
+            { label: "MACaddress", value: deviceData.DMACaddress },
+            { label: "Hardware", value: deviceData.hardware },
+            { label: "Operating System", value: deviceData.os },
+            { label: "Type", value: deviceData.type },
+            { label: "Vendor", value: deviceData.vendor },
+            { label: "Location", value: deviceData.location },
+            { label: "Room", value: deviceData.room },
+            { label: "Status", value: deviceData.status ? "Active" : "Inactive" },
+          ].map((item, index) => (
+            <Grid item xs={12} sx={{ marginBottom: 2, marginTop: index === 0 ? 1.5 : 0 }} key={item.label}>
+              <Grid container>
+                <Grid item xs={3}>
+                  <Typography
+                    component="div"
+                    color={"#000000"}
+                    fontSize={18}
+                    fontWeight="medium"
+                    paddingBottom={0.5}
+                    sx={{ textAlign: "left" }}
+                  >
+                    {item.label}
+                  </Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <Typography
+                    component="div"
+                    color={"#000000"}
+                    fontSize={18}
+                    paddingBottom={0.5}
+                    sx={{ textAlign: "left" }}
+                  >
+                    {item.value || `Unknown ${item.label}`}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ marginBottom: 2 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  fontWeight="medium"
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Type
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Type || "Unknown Type"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ marginBottom: 2 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontWeight="medium"
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Vendor
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Vendor || "Unknown Vendor"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ marginBottom: 2 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontWeight="medium"
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Location
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Location || "Unknown Location"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ marginBottom: 2 }}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  fontWeight="medium"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Room
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Room || "Unknown Room"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container>
-              <Grid item xs={3}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontWeight="medium"
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  Status
-                </Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Typography
-                  component="div"
-                  color={"#000000"}
-                  fontSize={18}
-                  paddingBottom={0.5}
-                  sx={{ textAlign: "left" }}
-                >
-                  {deviceData.Status ? "Active" : "Inactive"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
+          ))}
         </Grid>
       </Box>
+
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          marginLeft: 5.5,
+        }}
+      >
+        <Typography
+          variant="h5"
+          component="div"
+          fontWeight={600}
+          color={"#242D5D"}
+          sx={{mt:5}}
+        >
+          INTERFACE
+        </Typography>
+      </Box>
+      <Divider
+        sx={{
+          width: "96%",
+          backgroundColor: "gray",
+          mt:2,
+          marginBottom: 2,
+        }}
+      />
+
+      <DeviceInterfaceComponent DMACaddress={deviceData.DMACaddress} />
     </>
   );
 };
