@@ -1,10 +1,32 @@
+import React, { useEffect, useState } from "react";
 import { Button, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
+import { getDetailsData } from "../api/DetailsApi";
+import { IDetails } from "../interface/IDetails";
 
-const Dashboard = () => {
+const Devices = () => {
   const windowSize = useWindowSize();
+  const [detailsList, setDetailsList] = useState<IDetails[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDetailsData();
+        setDetailsList(data);
+      } catch (error) {
+        console.error("Error fetching details data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Extract unique locations
+  const uniqueLocations = Array.from(
+    new Set(detailsList.map((detail) => detail.Location).filter((loc) => loc))
+  ).filter((loc): loc is string => loc !== null); // Ensure all locations are strings
 
   return (
     <>
@@ -13,8 +35,8 @@ const Dashboard = () => {
           sx={{
             width: 1,
             display: "flex",
-            justifyContent: "space-between", // Adjust alignment to space-between
-            alignItems: "center", // Align items vertically
+            justifyContent: "space-between",
+            alignItems: "center",
             marginTop: 5,
           }}
         >
@@ -40,7 +62,6 @@ const Dashboard = () => {
                 outline: "none",
                 color: "#FFFFFB",
               },
-
               "&:hover": {
                 backgroundColor: "#F37E58",
               },
@@ -56,35 +77,19 @@ const Dashboard = () => {
           marginTop: 2,
           height: "auto",
           display: "flex",
+          flexDirection: "column", // Arrange items vertically
         }}
       >
-        <Grid container justifyContent="center" marginTop={2}>
-          <Grid item xs={9} sm={9} md={11} lg={12}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                flexDirection: "column",
-                flexWrap: "wrap",
-                gap: 3,
-                marginBottom: 3,
-              }}
-            >
-              {Array.from(new Array(3)).map((_, index) => (
-                <Box
-                  key={index}
-                  sx={{ minWidth: "20%", flex: "0 0 auto", marginBottom: 2.5 }}
-                >
-                  <DevicesComponents />
-                </Box>
-              ))}
-            </Box>
-          </Grid>
+        <Grid container spacing={3} justifyContent="flex-start" marginTop={2}>
+          {uniqueLocations.map((location, index) => (
+            <Grid item xs={12} key={index}>
+              <DevicesComponents location={location} />
+            </Grid>
+          ))}
         </Grid>
       </Box>
     </>
   );
 };
 
-export default Dashboard;
+export default Devices;

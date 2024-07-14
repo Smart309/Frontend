@@ -1,12 +1,31 @@
+import React, { useEffect, useState } from "react";
 import { Card, Box, Typography, Grid } from "@mui/material";
 import DevicesCard from "./DevicesCard";
+import { IDetails } from "../../interface/IDetails";
+import { getDetailsData } from "../../api/DetailsApi";
 
-const DevicesComponents = () => {
+const DevicesComponents = ({ location }: { location: string }) => {
+  const [devices, setDevices] = useState<IDetails[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDetailsData();
+        // Filter devices based on the location
+        setDevices(data.filter((device) => device.Location === location));
+      } catch (error) {
+        console.error("Error fetching details data:", error);
+      }
+    };
+
+    fetchData();
+  }, [location]);
+
   return (
     <Card
       sx={{
-        height: "15rem",
-        width: "68rem", // Set width to 70rem (adjust as needed)
+        height: "auto",
+        width: "68rem",
         bgcolor: "#FFFFFB",
         borderRadius: "30px",
         position: "relative",
@@ -16,7 +35,8 @@ const DevicesComponents = () => {
         paddingBottom: 1,
         display: "flex",
         flexDirection: "column",
-        overflowX: "auto", // Enable horizontal scrolling if content exceeds the card's width
+        overflowX: "auto",
+        marginBottom: 3,
       }}
     >
       <Typography
@@ -25,42 +45,14 @@ const DevicesComponents = () => {
         color={"#21248B"}
         sx={{ alignSelf: "flex-start", paddingTop: 2 }}
       >
-        30's Building
+        {location || "Default Location"}
       </Typography>
-      <Grid container justifyContent="center" marginTop={2}>
-        <Grid item xs={9} sm={9} md={11} lg={12}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              flexDirection: "row",
-              flexWrap: "nowrap",
-              gap: 3,
-
-              overflowX: "auto",
-              "&::-webkit-scrollbar": {
-                height: 13,
-              },
-              "&::-webkit-scrollbar-track": {
-                borderRadius: "40px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                background: "#21248B",
-                borderRadius: "40px",
-              },
-            }}
-          >
-            {Array.from(new Array(6)).map((_, index) => (
-              <Box
-                key={index}
-                sx={{ minWidth: "20%", flex: "0 0 auto", marginBottom: 1.5 }}
-              >
-                <DevicesCard />
-              </Box>
-            ))}
-          </Box>
-        </Grid>
+      <Grid container spacing={3} marginTop={0.1} marginBottom={3}>
+        {devices.map((device, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <DevicesCard />
+          </Grid>
+        ))}
       </Grid>
     </Card>
   );
