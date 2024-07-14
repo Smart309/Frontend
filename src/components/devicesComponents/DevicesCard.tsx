@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ComputerDevice from "../../assets/ComputerDevice.svg";
+import { IDevice } from "../../interface/IDevice";
 
 interface DevicesCardProps {
   device: IDevice; // รับพร็อพเพอร์ตี้ device ทั้งหมด
@@ -43,7 +44,7 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
               },
             }}
           >
-            {device.DName || "Device Name"}
+            {device.Dname || "Device Name"}
           </Typography>
         </Link>
       </Box>
@@ -75,14 +76,14 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
             <Typography variant="h6" component="div" color={"#242D5D"}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Room</span>
-                <span style={{ marginLeft: 10 }}>{device.Room || "N/A"}</span>
+                <span style={{ marginLeft: 10 }}>{device.room || "N/A"}</span>
               </Box>
             </Typography>
             <Typography variant="h6" component="div" color={"#242D5D"}>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Status:</span>
                 <span style={{ marginLeft: 10 }}>
-                  {device.Status ? "On" : "Off"}
+                  {device.status ? "On" : "Off"}
                 </span>
               </Box>
             </Typography>

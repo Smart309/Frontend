@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,34 +8,13 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Typography,
   Snackbar,
   CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-<<<<<<< HEAD
 import { getAlertData } from "../api/AlertApi"; // Adjust this import based on your file structure
 import { IAlert } from "../interface/IDevice"; // Adjust this import based on your file structure
-=======
-import { useState } from "react";
-
-// Function to create sample data rows
-function createData(Time: Date, Problem: string, Area: string) {
-  return { Time, Problem, Area };
-}
-
-const rows = [
-  createData(
-    new Date(2021, 10, 25, 12, 0, 0),
-    "Traffic overload",
-    "Device One"
-  ),
-  createData(
-    new Date(2021, 10, 25, 12, 0, 0),
-    "Traffic overload",
-    "Device One"
-  ),
-];
->>>>>>> feature/Devices
 
 const AlertsComponent = () => {
   const [alerts, setAlerts] = useState<IAlert[]>([]);
@@ -86,15 +65,9 @@ const AlertsComponent = () => {
     <TableContainer
       component={Paper}
       sx={{
-<<<<<<< HEAD
-        boxShadow: 'none',
-        '& .MuiPaper-root': { boxShadow: 'none' },
-        backgroundColor: 'transparent'
-=======
         boxShadow: "none",
         "& .MuiPaper-root": { boxShadow: "none" },
         backgroundColor: "transparent",
->>>>>>> feature/Devices
       }}
     >
       <Table
@@ -112,11 +85,7 @@ const AlertsComponent = () => {
             },
           },
         }}
-<<<<<<< HEAD
         aria-label="alerts table"
-=======
-        aria-label="simple table"
->>>>>>> feature/Devices
       >
         <TableHead>
           <TableRow>
@@ -127,19 +96,11 @@ const AlertsComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-<<<<<<< HEAD
           {alerts.map((alert, index) => (
             <TableRow key={index}>
               <TableCell>{alert.startTime}</TableCell>
               <TableCell align="center">{alert.problem}</TableCell>
               <TableCell align="center">{alert.area}</TableCell>
-=======
-          {rows.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell>{row.Time.toLocaleString()}</TableCell>
-              <TableCell align="center">{row.Problem}</TableCell>
-              <TableCell align="center">{row.Area}</TableCell>
->>>>>>> feature/Devices
               <TableCell align="center">
                 <IconButton
                   aria-label="find"

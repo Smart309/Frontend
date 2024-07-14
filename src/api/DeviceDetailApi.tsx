@@ -1,9 +1,6 @@
 import axios from "axios";
-<<<<<<< HEAD
 import { IDevice } from "../interface/IDevice";
-// import { IDevice } from "../interface/IDevice";
-=======
->>>>>>> feature/Devices
+
 
 const getDeviceData = async (): Promise<IDevice[]> => {
   try {

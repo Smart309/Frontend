@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
 import { getDeviceData } from "../api/DeviceDetailApi";
+import { IDevice } from "../interface/IDevice";
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();
@@ -26,7 +27,7 @@ const Devices: React.FC = () => {
   const uniqueLocations = Array.from(
     new Set(
       deviceList
-        .map((device) => device.Location)
+        .map((device) => device.location)
         .filter((loc): loc is string => loc !== null)
     )
   );

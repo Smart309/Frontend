@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Typography, Grid } from "@mui/material";
 import DevicesCard from "./DevicesCard";
 import { getDeviceData } from "../../api/DeviceDetailApi";
+import { IDevice } from "../../interface/IDevice";
 
 interface DevicesComponentsProps {
   location: string;
@@ -15,7 +16,7 @@ const DevicesComponents: React.FC<DevicesComponentsProps> = ({ location }) => {
       try {
         const data = await getDeviceData();
         const filteredDevices = data.filter(
-          (device) => device.Location === location
+          (device) => device.location === location
         );
         setDevices(filteredDevices);
       } catch (error) {

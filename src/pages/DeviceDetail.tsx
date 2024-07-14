@@ -2,6 +2,7 @@ import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent";
+import DeviceInterfaceComponent from "../components/devicesComponents/deviceDetail/DeviceInterfaceComponent";
 
 const DeviceDetail = () => {
   const windowSize = useWindowSize();
@@ -54,8 +55,6 @@ const DeviceDetail = () => {
         >
           <DeviceDetailComponent />
         </Box>
-<<<<<<< HEAD
-=======
         <Box
           sx={{
             width: 1,
@@ -123,9 +122,8 @@ const DeviceDetail = () => {
               }}
             ></Typography>
           )}
-          <DeviceInterfaceComponent />
+          <DeviceInterfaceComponent DMACaddress={""} />
         </Box>
->>>>>>> feature/Devices
       </Box>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -45,35 +45,35 @@ const ManageComponent = () => {
   }
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        boxShadow: "none",
-        "& .MuiPaper-root": { boxShadow: "none" },
-        backgroundColor: "transparent",
+    <TableContainer 
+      component={Paper} 
+      sx={{ 
+        boxShadow: 'none',
+        '& .MuiPaper-root': { boxShadow: 'none' },
+        backgroundColor: 'transparent'
       }}
     >
-      <Table
-        sx={{
+      <Table 
+        sx={{ 
           minWidth: 650,
-          "& .MuiTable-root": { borderCollapse: "separate", borderSpacing: 0 },
-          "& .MuiTableCell-root": { borderBottom: "none" },
-          "& .MuiTableBody-root .MuiTableRow-root": {
-            "&:nth-of-type(even)": { backgroundColor: "white" },
-            "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
-            "&:hover": {
-              backgroundColor: "#FFF3E0",
-              transition: "background-color 0.3s ease",
-              cursor: "pointer",
+          '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
+          '& .MuiTableCell-root': { borderBottom: 'none' },
+          '& .MuiTableBody-root .MuiTableRow-root': {
+            '&:nth-of-type(even)': { backgroundColor: 'white' },
+            '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
+            '&:hover': { 
+              backgroundColor: '#FFF3E0', 
+              transition: 'background-color 0.3s ease',
+              cursor: 'pointer', 
             },
           },
-        }}
+        }} 
         aria-label="devices table"
       >
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="center">Vendor</TableCell>
+            <TableCell>Vendor</TableCell>
+            <TableCell align="center">Name</TableCell>
             <TableCell align="center">Location</TableCell>
             <TableCell align="center">MAC address</TableCell>
             <TableCell align="center"></TableCell>
@@ -81,18 +81,18 @@ const ManageComponent = () => {
         </TableHead>
         <TableBody>
           {devices.map((device) => (
-            <TableRow key={device.DMACaddress} sx={{ cursor: "pointer" }}>
+            <TableRow key={device.DMACaddress} sx={{ cursor: 'pointer' }}>
               <TableCell component="th" scope="row">
-                {device.Dname}
+                {device.vendor}
               </TableCell>
-              <TableCell align="center">{device.vendor}</TableCell>
+              <TableCell align="center">{device.Dname}</TableCell>
               <TableCell align="center">{device.location}</TableCell>
               <TableCell align="center">{device.DMACaddress}</TableCell>
               <TableCell align="center">
                 <IconButton
                   sx={{
-                    "&:focus": {
-                      outline: "none",
+                    '&:focus': {
+                      outline: 'none',
                     },
                   }}
                   aria-label="edit"
@@ -105,8 +105,8 @@ const ManageComponent = () => {
                 </IconButton>
                 <IconButton
                   sx={{
-                    "&:focus": {
-                      outline: "none",
+                    '&:focus': {
+                      outline: 'none',
                     },
                   }}
                   aria-label="delete"
