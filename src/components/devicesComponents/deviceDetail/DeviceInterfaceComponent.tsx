@@ -1,13 +1,14 @@
+// DeviceInterfaceComponent.tsx
 import { useState, useEffect } from "react";
 import {
-  Grid,
+  Box,
   Typography,
+  Divider,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Box,
 } from "@mui/material";
 import { getDeviceINT } from "../../../api/DeviceInterfaceApi";
 import { IInterface } from "../../../interface/IDevice";
@@ -16,22 +17,23 @@ interface DeviceInterfaceComponentProps {
   DMACaddress: string;
 }
 
-const DeviceInterfaceComponent = ({
+const DeviceInterfaceComponent: React.FC<DeviceInterfaceComponentProps> = ({
   DMACaddress,
-}: DeviceInterfaceComponentProps) => {
+}) => {
   const [deviceINT, setDeviceINT] = useState<IInterface[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDeviceData = async () => {
+    const fetchDeviceINT = async () => {
+      setLoading(true);
       try {
-        const data = await getDeviceINT();
-        setDeviceINT(
-          data.filter(
-            (interfaceData) => interfaceData.DMACaddress === DMACaddress
-          )
+        const allInterfaces = await getDeviceINT();
+        const interfaces = allInterfaces.filter(
+          (interfaceData) => interfaceData.DMACaddress === DMACaddress
         );
+        console.log("Fetched interfaces:", interfaces); // Log the interfaces data
+        setDeviceINT(interfaces);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -43,97 +45,72 @@ const DeviceInterfaceComponent = ({
       }
     };
 
-    fetchDeviceData();
+    fetchDeviceINT();
   }, [DMACaddress]);
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <Typography>Error: {error}</Typography>;
+    console.error("Error fetching data:", error); // Log the error
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <>
-      <Grid container sx={{ width: "95%" }}>
-        <Table sx={{ minWidth: 650 }} aria-label="Interface table">
-          <TableHead>
-            <TableRow>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        variant="h6"
+        component="div"
+        color={"#242D5D"}
+        sx={{ fontSize: "1.2rem", textAlign: "left" }}
+      >
+        Interface Information
+      </Typography>
+
+      <Divider
+        sx={{
+          width: "96%",
+          backgroundColor: "gray",
+          marginTop: 2,
+          marginBottom: 2,
+        }}
+      />
+
+      <Table sx={{ minWidth: 650, marginTop: 2 }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Interface Name</TableCell>
+            <TableCell>IP Address</TableCell>
+            <TableCell>Speed</TableCell>
+            <TableCell>Status</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {deviceINT?.map((interfaceData) => (
+            <TableRow key={interfaceData.ipAddress || interfaceData.Intname}>
+              <TableCell>{interfaceData.Intname || "Unknown Name"}</TableCell>
+              <TableCell>{interfaceData.ipAddress || "Unknown IP"}</TableCell>
+              <TableCell>{interfaceData.speed || "Unknown Speed"}</TableCell>
               <TableCell>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  color={"#242D5D"}
-                  sx={{ fontSize: "1.3rem" }}
-                >
-                  Interface
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  color={"#242D5D"}
-                  sx={{ fontSize: "1.3rem", textAlign: "center" }}
-                >
-                  IP
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  color={"#242D5D"}
-                  sx={{ fontSize: "1.3rem", textAlign: "center" }}
-                >
-                  Speed
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  color={"#242D5D"}
-                  sx={{ fontSize: "1.3rem", textAlign: "center" }}
-                >
-                  Status
-                </Typography>
+                {interfaceData.status ? "Active" : "Inactive"}
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {deviceINT?.map((interfaceData) => (
-              <TableRow
-                key={interfaceData.ImacAddress}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <Typography sx={{ fontSize: "18px" }}>
-                    {interfaceData.Intname}
-                  </Typography>
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Typography sx={{ fontSize: "18px" }}>
-                    {interfaceData.ipAddress}
-                  </Typography>
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Typography
-                    sx={{ fontSize: "18px" }}
-                  >{`${interfaceData.speed} Mbps`}</Typography>
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Typography sx={{ fontSize: "18px" }}>
-                    {interfaceData.status ? "Up" : "Down"}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Grid>
-    </>
+          )) || (
+            <TableRow>
+              <TableCell colSpan={4}>No interfaces available.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </Box>
   );
 };
 
