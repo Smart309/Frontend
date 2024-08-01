@@ -1,11 +1,37 @@
 import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
 import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent";
 import DeviceInterfaceComponent from "../components/devicesComponents/deviceDetail/DeviceInterfaceComponent";
+import { getDeviceData } from "../api/DeviceDetailApi";
+import { IDevice } from "../interface/IDevice";
 
 const DeviceDetail = () => {
   const windowSize = useWindowSize();
+  const location = useLocation();
+  const [deviceData, setDeviceData] = useState<IDevice | null>(
+    location.state?.device || null
+  );
+
+  useEffect(() => {
+    if (!deviceData) {
+      const fetchDeviceData = async () => {
+        try {
+          const allDevices = await getDeviceData();
+          setDeviceData(
+            allDevices.find((d) => d.Dname === location.state?.device?.DName) ||
+              null
+          );
+        } catch (error) {
+          console.error("Error fetching device data:", error);
+        }
+      };
+
+      fetchDeviceData();
+    }
+  }, [deviceData, location.state?.device?.DName]);
 
   return (
     <>
@@ -59,7 +85,7 @@ const DeviceDetail = () => {
           sx={{
             width: 1,
             display: "flex",
-            justifyContent: "space-between", // เปลี่ยนจาก flex-start เป็น space-between เพื่อให้ปุ่มชิดขวา
+            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 3,
           }}
@@ -86,8 +112,7 @@ const DeviceDetail = () => {
                 outline: "none",
                 color: "#FFFFFB",
               },
-
-              "&:hover": {
+               "&:hover": {
                 backgroundColor: "#F37E58",
               },
             }}
@@ -95,7 +120,7 @@ const DeviceDetail = () => {
             Graph
           </Button>
         </Box>
-
+        
         <Box
           sx={{
             backgroundColor: "#FFFFFB",
@@ -107,10 +132,7 @@ const DeviceDetail = () => {
             alignItems: "center",
             minHeight: "fit-content",
             marginBottom: 5,
-            // height: 1,
             py: 3,
-            // pt: windowSize.width >= 1100 ? "15vh" : "0vh",
-            pb: 3,
           }}
         >
           {windowSize.width < 1100 && (
@@ -122,7 +144,9 @@ const DeviceDetail = () => {
               }}
             ></Typography>
           )}
-          <DeviceInterfaceComponent DMACaddress={""} />
+          {deviceData && (
+            <DeviceInterfaceComponent DMACaddress={deviceData.DMACaddress} />
+          )}
         </Box>
       </Box>
     </>

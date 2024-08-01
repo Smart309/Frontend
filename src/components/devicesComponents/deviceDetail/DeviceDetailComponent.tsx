@@ -1,34 +1,28 @@
-// DeviceDetailComponent.tsx
 import { useState, useEffect } from "react";
 import { Box, Typography, Divider, Grid } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { getDeviceData } from "../../../api/DeviceDetailApi";
 import { IDevice } from "../../../interface/IDevice";
-import useWindowSize from "../../../hooks/useWindowSize";
-import DeviceInterfaceComponent from "./DeviceInterfaceComponent";
 
 const DeviceDetailComponent = () => {
   const location = useLocation();
   const [deviceData, setDeviceData] = useState<IDevice | null>(
     location.state?.device || null
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // no need to load again
   const [error, setError] = useState<string | null>(null);
-  const windowSize = useWindowSize();
 
   useEffect(() => {
     if (!deviceData) {
       setLoading(true);
+      // Fetch device data only if deviceData is not passed
       const fetchDeviceData = async () => {
         try {
           const allDevices = await getDeviceData();
-          console.log("All devices fetched:", allDevices);
-
-          const device =
+          setDeviceData(
             allDevices.find((d) => d.Dname === location.state?.device?.DName) ||
-            null;
-          console.log("Fetched device:", device);
-          setDeviceData(device);
+              null
+          );
         } catch (error) {
           if (error instanceof Error) {
             setError(error.message);
@@ -49,7 +43,7 @@ const DeviceDetailComponent = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{error}</div>;
   }
 
   if (!deviceData) {
@@ -85,7 +79,6 @@ const DeviceDetailComponent = () => {
           marginBottom: 2,
         }}
       />
-
       <Box
         sx={{
           width: "100%",
@@ -95,7 +88,7 @@ const DeviceDetailComponent = () => {
         }}
       >
         <Grid container sx={{ width: "90%" }}>
-          {/* Hardware */}
+          {/* Repeat similar structure for other properties */}
           <Grid item xs={12} sx={{ marginBottom: 2, marginTop: 1.5 }}>
             <Grid container>
               <Grid item xs={3}>
@@ -123,7 +116,7 @@ const DeviceDetailComponent = () => {
               </Grid>
             </Grid>
           </Grid>
-          {/* Operating System */}
+          {/* Add other properties in a similar way */}
           <Grid item xs={12} sx={{ marginBottom: 2 }}>
             <Grid container>
               <Grid item xs={3}>
@@ -146,20 +139,19 @@ const DeviceDetailComponent = () => {
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
-                  {deviceData.os || "Unknown OS"}
+                  {deviceData.os || "Unknown Os"}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
-          {/* Type */}
           <Grid item xs={12} sx={{ marginBottom: 2 }}>
             <Grid container>
               <Grid item xs={3}>
                 <Typography
                   component="div"
                   color={"#000000"}
-                  fontWeight="medium"
                   fontSize={18}
+                  fontWeight="medium"
                   paddingBottom={0.5}
                   sx={{ textAlign: "left" }}
                 >
@@ -179,7 +171,6 @@ const DeviceDetailComponent = () => {
               </Grid>
             </Grid>
           </Grid>
-          {/* Vendor */}
           <Grid item xs={12} sx={{ marginBottom: 2 }}>
             <Grid container>
               <Grid item xs={3}>
@@ -207,7 +198,6 @@ const DeviceDetailComponent = () => {
               </Grid>
             </Grid>
           </Grid>
-          {/* Location */}
           <Grid item xs={12} sx={{ marginBottom: 2 }}>
             <Grid container>
               <Grid item xs={3}>
@@ -235,7 +225,6 @@ const DeviceDetailComponent = () => {
               </Grid>
             </Grid>
           </Grid>
-          {/* Room */}
           <Grid item xs={12} sx={{ marginBottom: 2 }}>
             <Grid container>
               <Grid item xs={3}>
@@ -263,7 +252,6 @@ const DeviceDetailComponent = () => {
               </Grid>
             </Grid>
           </Grid>
-          {/* Status */}
           <Grid item xs={12}>
             <Grid container>
               <Grid item xs={3}>
@@ -293,33 +281,6 @@ const DeviceDetailComponent = () => {
           </Grid>
         </Grid>
       </Box>
-
-      <Box
-        sx={{
-          backgroundColor: "#FFFFFB",
-          flex: 1,
-          display: "flex",
-          borderRadius: 8,
-          flexDirection: "column",
-          justifyContent: windowSize.width >= 1100 ? "center" : "start",
-          alignItems: "center",
-          minHeight: "fit-content",
-          marginBottom: 5,
-          py: 3,
-          pb: 3,
-        }}
-      >
-        {windowSize.width < 1100 && (
-          <Typography
-            align="center"
-            sx={{
-              mt: "6rem",
-              mb: "2rem",
-            }}
-          ></Typography>
-        )}
-      </Box>
-      <DeviceInterfaceComponent DMACaddress={deviceData.DMACaddress} />
     </>
   );
 };
