@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getDeviceData } from "../api/DeviceDetailApi"; // Adjust this import based on your file structure
-import { IDevice } from "../interface/IDevice"; // Adjust this import based on your file structure
+import { getDeviceData } from "../api/DeviceDetailApi";
+import { IDevice } from "../interface/IDevice";
 
 const ManageComponent = () => {
   const [devices, setDevices] = useState<IDevice[]>([]);
@@ -45,38 +45,38 @@ const ManageComponent = () => {
   }
 
   return (
-    <TableContainer 
-      component={Paper} 
-      sx={{ 
+    <TableContainer
+      component={Paper}
+      sx={{
         boxShadow: 'none',
         '& .MuiPaper-root': { boxShadow: 'none' },
         backgroundColor: 'transparent'
       }}
     >
-      <Table 
-        sx={{ 
+      <Table
+        sx={{
           minWidth: 650,
           '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
           '& .MuiTableCell-root': { borderBottom: 'none' },
           '& .MuiTableBody-root .MuiTableRow-root': {
             '&:nth-of-type(even)': { backgroundColor: 'white' },
             '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
-            '&:hover': { 
-              backgroundColor: '#FFF3E0', 
+            '&:hover': {
+              backgroundColor: '#FFF3E0',
               transition: 'background-color 0.3s ease',
-              cursor: 'pointer', 
+              cursor: 'pointer',
             },
           },
-        }} 
+        }}
         aria-label="devices table"
       >
         <TableHead>
           <TableRow>
-            <TableCell>Vendor</TableCell>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">Location</TableCell>
-            <TableCell align="center">MAC address</TableCell>
-            <TableCell align="center"></TableCell>
+            <TableCell sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Vendor</TableCell>
+            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Name</TableCell>
+            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Location</TableCell>
+            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>MAC address</TableCell>
+            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

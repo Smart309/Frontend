@@ -13,8 +13,27 @@ import {
   CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { getAlertData } from "../api/AlertApi"; // Adjust this import based on your file structure
-import { IAlert } from "../interface/IDevice"; // Adjust this import based on your file structure
+import { getAlertData } from "../api/AlertApi";
+
+interface IAlert {
+  startDate: string;
+  startTime: string;
+  problem: string;
+  area: string;
+  problemStatus: boolean;
+}
+
+const formatDate = (dateString: string) => {
+  // Extract only the date part (YYYY-MM-DD) from the string
+  const dateMatch = dateString.match(/^\d{4}-\d{2}-\d{2}/);
+  return dateMatch ? dateMatch[0] : dateString;
+};
+
+const formatTime = (timeString: string) => {
+  // Extract only the time part (HH:mm:ss) from the string
+  const timeMatch = timeString.match(/\d{2}:\d{2}:\d{2}/);
+  return timeMatch ? timeMatch[0] : timeString;
+};
 
 const AlertsComponent = () => {
   const [alerts, setAlerts] = useState<IAlert[]>([]);
@@ -46,7 +65,7 @@ const AlertsComponent = () => {
     setTimeout(() => {
       setSearching(false);
       setSnackbarOpen(false);
-    }, 2000); // Assuming search operation takes 2 seconds
+    }, 2000);
   };
 
   const handleCloseSnackbar = () => {
@@ -89,31 +108,51 @@ const AlertsComponent = () => {
       >
         <TableHead>
           <TableRow>
-            <TableCell>Time</TableCell>
-            <TableCell align="center">Problem</TableCell>
-            <TableCell align="center">Area</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
+              Time
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              Problem
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              Area
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {alerts.map((alert, index) => (
             <TableRow key={index}>
-              <TableCell>{alert.startTime}</TableCell>
+              <TableCell>
+                {formatDate(alert.startDate)} {formatTime(alert.startTime)}
+              </TableCell>
               <TableCell align="center">{alert.problem}</TableCell>
               <TableCell align="center">{alert.area}</TableCell>
               <TableCell align="center">
                 <IconButton
                   aria-label="find"
                   onClick={handleSearchClick}
+                  disabled={!alert.problemStatus}
                   sx={{
                     color: "white",
-                    backgroundColor: "blue",
+                    backgroundColor: alert.problemStatus ? "#FF0000" : "gray",
                     borderRadius: "100%",
                     "&:focus": {
                       outline: "none",
                     },
                     "&:hover": {
-                      backgroundColor: "darkblue",
+                      backgroundColor: alert.problemStatus ? "#BF0000" : "gray",
                     },
                   }}
                 >
