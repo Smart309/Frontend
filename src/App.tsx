@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { ThemeConfig } from "./config/ThemeConfig";
 import "./App.css";
@@ -18,6 +23,8 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
+            {/* set dashboard to default page */}
+            <Route index element={<Navigate replace to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/graphs" element={<Graphs />} />
             <Route path="/storage" element={<Storage />} />
