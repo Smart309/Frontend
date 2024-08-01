@@ -21,9 +21,9 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
     <ButtonBase
       onClick={handleClick}
       disabled={!device.status}
-      sx={{ 
-        width: "18.5rem", 
-        height: "9.5rem", 
+      sx={{
+        width: "18.5rem",
+        height: "9.5rem",
         textAlign: "left",
         opacity: device.status ? 1 : 0.5,
         transition: "all 0.3s ease",
@@ -82,12 +82,9 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
               src={ComputerDevice}
               alt="Computer Device"
               width={100}
-              sx={{ 
+              sx={{
                 marginRight: "18px",
                 transition: "transform 0.3s ease",
-                "&:hover": {
-                  transform: device.status ? "scale(1.1)" : "none",
-                },
               }}
             />
             <Box
@@ -106,8 +103,8 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
               <Typography variant="h6" component="div" color={"#242D5D"}>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <span>Status:</span>
-                  <span 
-                    style={{ 
+                  <span
+                    style={{
                       marginLeft: 10,
                       color: device.status ? "green" : "red",
                       transition: "color 0.3s ease",
