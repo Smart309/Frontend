@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Typography, Grid } from "@mui/material";
+import { Card, Typography, Grid, Box } from "@mui/material";
 import DevicesCard from "./DevicesCard";
 import { getDeviceData } from "../../api/DeviceDetailApi";
 import { IDevice } from "../../interface/IDevice";
@@ -41,7 +41,7 @@ const DevicesComponents: React.FC<DevicesComponentsProps> = ({ location }) => {
         paddingBottom: 1,
         display: "flex",
         flexDirection: "column",
-        overflowX: "auto",
+
         marginBottom: 3,
       }}
     >
@@ -53,15 +53,29 @@ const DevicesComponents: React.FC<DevicesComponentsProps> = ({ location }) => {
       >
         {location || "Default Location"}
       </Typography>
-      <Grid container spacing={3} marginTop={0} marginBottom={2}>
-        {devices.map((device, index) => (
-          <Grid item key={index}>
-            <DevicesCard
-              device={device} // Pass device object here
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <Box
+        sx={{
+          px:1,
+          overflowX: "auto", // Enable horizontal scrolling
+          width: "100%", // Ensure it takes the full width of its parent
+        }}
+      >
+        <Grid
+          container
+          spacing={3}
+          marginTop={0}
+          marginBottom={2}
+          sx={{
+            width: "max-content", // Ensure the Grid content dictates the width
+          }}
+        >
+          {devices.map((device, index) => (
+            <Grid item key={index}>
+              <DevicesCard device={device} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     </Card>
   );
 };

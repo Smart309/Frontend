@@ -55,12 +55,13 @@ const Devices: React.FC = () => {
           <Button
             type="submit"
             sx={{
+              // px: 4,
               color: "#FFFFFB",
               backgroundColor: "#F25A28",
               fontSize: "1rem",
               fontWeight: 600,
               borderRadius: "70px",
-              width: "7rem",
+              width: "8rem",
               height: "2.5rem",
               "&:focus": {
                 outline: "none",
@@ -71,7 +72,7 @@ const Devices: React.FC = () => {
               },
             }}
           >
-            + Device
+            Add Device
           </Button>
         </Box>
       )}
@@ -85,8 +86,8 @@ const Devices: React.FC = () => {
       >
         <Grid container spacing={3} justifyContent="flex-start" marginTop={2}>
           {uniqueLocations.map((location, index) => (
-            <Grid item xs={12} key={index}>
-              <DevicesComponents location={location} />
+            <Grid item xs={12} key={index} >
+              <DevicesComponents  location={location} />
             </Grid>
           ))}
         </Grid>

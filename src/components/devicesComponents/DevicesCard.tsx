@@ -19,20 +19,24 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
 
   return (
     <ButtonBase
-      onClick={handleClick}
-      disabled={!device.status}
-      sx={{
-        width: "18.5rem",
-        height: "9.5rem",
-        textAlign: "left",
-        opacity: device.status ? 1 : 0.5,
-        transition: "all 0.3s ease",
-        "&:hover": {
-          transform: device.status ? "scale(1.05)" : "none",
-          boxShadow: device.status ? "0 4px 20px rgba(0,0,0,0.1)" : "none",
-        },
-      }}
-    >
+  onClick={handleClick}
+  disabled={!device.status}
+  sx={{
+    width: "18.5rem",
+    height: "9.5rem",
+    textAlign: "left",
+    opacity: device.status ? 1 : 0.5,
+    transition: "all 0.3s ease",
+    outline: "none", // Ensure focus style is removed for accessibility purposes
+    "&:focus": {
+      outline: "none !important", // Explicitly disable default focus styles
+    },
+    "&:hover": {
+      transform: device.status ? "scale(1.05)" : "none",
+      boxShadow: device.status ? "0 4px 20px rgba(0,0,0,0.1)" : "none",
+    },
+  }}
+>
       <Card
         sx={{
           height: "100%",
