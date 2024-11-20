@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack} from "@mui/material";
 import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import useWindowSize from "../hooks/useWindowSize";

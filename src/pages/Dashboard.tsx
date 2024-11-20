@@ -40,7 +40,7 @@ const Dashboard = () => {
             backgroundColor: "#FFFFFB",
             flex: 1,
             display: "flex",
-            borderRadius: 8,
+            borderRadius: 3,
             flexDirection: "column",
             justifyContent: windowSize.width >= 1100 ? "center" : "start",
             alignItems: "center",

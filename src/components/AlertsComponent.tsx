@@ -24,13 +24,24 @@ interface IAlert {
 }
 
 const formatDate = (dateString: string) => {
-  // Extract only the date part (YYYY-MM-DD) from the string
-  const dateMatch = dateString.match(/^\d{4}-\d{2}-\d{2}/);
-  return dateMatch ? dateMatch[0] : dateString;
+  const englishMonths = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const dateMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  
+  if (dateMatch) {
+    const year = dateMatch[1];
+    const month = parseInt(dateMatch[2], 10) - 1; 
+    const day = dateMatch[3];
+    return `${day} ${englishMonths[month]} ${year}`;
+  }
+  
+  return dateString; 
 };
 
 const formatTime = (timeString: string) => {
-  // Extract only the time part (HH:mm:ss) from the string
   const timeMatch = timeString.match(/\d{2}:\d{2}:\d{2}/);
   return timeMatch ? timeMatch[0] : timeString;
 };
@@ -109,6 +120,9 @@ const AlertsComponent = () => {
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
+              Date
+            </TableCell>
+            <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
               Time
             </TableCell>
             <TableCell
@@ -134,9 +148,8 @@ const AlertsComponent = () => {
         <TableBody>
           {alerts.map((alert, index) => (
             <TableRow key={index}>
-              <TableCell>
-                {formatDate(alert.startDate)} {formatTime(alert.startTime)}
-              </TableCell>
+              <TableCell>{formatDate(alert.startDate)}</TableCell>
+              <TableCell>{formatTime(alert.startTime)}</TableCell>
               <TableCell align="center">{alert.problem}</TableCell>
               <TableCell align="center">{alert.area}</TableCell>
               <TableCell align="center">
