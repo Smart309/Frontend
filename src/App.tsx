@@ -16,6 +16,7 @@ import Alerts from "./pages/Alerts";
 import ContactUs from "./pages/ContactUs";
 import Devices from "./pages/Devices";
 import DeviceDetail from "./pages/DeviceDetail";
+import AddDevice from "./pages/AddDevice";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/devices" element={<Devices />} />
             <Route path="/devicedetail" element={<DeviceDetail />} />
+            <Route path="/adddevice" element={<AddDevice />} />
           </Route>
         </Routes>
       </Router>

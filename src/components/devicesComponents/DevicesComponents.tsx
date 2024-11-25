@@ -33,7 +33,7 @@ const DevicesComponents: React.FC<DevicesComponentsProps> = ({ location }) => {
         height: "auto",
         width: "68rem",
         bgcolor: "#FFFFFB",
-        borderRadius: "30px",
+        borderRadius: 3,
         position: "relative",
         boxShadow: "none",
         paddingLeft: 5,

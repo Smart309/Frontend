@@ -5,10 +5,12 @@ import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
 import { getDeviceData } from "../api/DeviceDetailApi";
 import { IDevice } from "../interface/IDevice";
+import { useNavigate } from "react-router-dom";
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();
   const [deviceList, setDeviceList] = useState<IDevice[]>([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +34,11 @@ const Devices: React.FC = () => {
     )
   );
 
+  const navigate = useNavigate();
+  const handleClick = () => {
+      navigate("/adddevice");
+  };
+
   return (
     <>
       {windowSize.width > 600 && (
@@ -53,6 +60,7 @@ const Devices: React.FC = () => {
             DEVICES
           </Typography>
           <Button
+          onClick={handleClick}
             type="submit"
             sx={{
               // px: 4,
