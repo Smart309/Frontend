@@ -45,12 +45,24 @@ const AddDevice: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const success = await StoreNewhost(hostname, hostgroup, snmp_version);
+    const success = await StoreNewhost(
+      hostname,
+      ip_address,
+      snmp_port,
+      snmp_version,
+      snmp_community,
+      hostgroup,
+      templates
+    );
     if (success) {
       // Clear form fields after successful submission
       sethostname("");
-      sethostgroup("");
+      setip_address("");
+      setsnmp_port("");
       setsnmp_version("");
+      setsnmp_community("");
+      sethostgroup("");
+      settemplates("");
       alert("Device added successfully!");
     } else {
       alert("Failed to add device. Please try again.");
@@ -74,8 +86,12 @@ const AddDevice: React.FC = () => {
 
   const StoreNewhost = async (
     hostname: string,
+    ip_address: string,
+    snmp_port: string,
+    snmp_version: string,
+    snmp_community: string,
     hostgroup: string,
-    snmp_version: string
+    templates: string
   ): Promise<boolean> => {
     try {
       await axios.post("/host/createHost", {
@@ -83,8 +99,12 @@ const AddDevice: React.FC = () => {
           {
             fields: {
               hostname,
-              hostgroup,
+              ip_address,
+              snmp_port,
               snmp_version,
+              snmp_community,
+              hostgroup,
+              templates,
             },
           },
         ],
