@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
 import { getDeviceData } from "../api/DeviceDetailApi";
 import { IDevice } from "../interface/IDevice";
-import { useNavigate } from "react-router-dom";
+import AddDevice from "./AddDevice"; // Import the AddDevice component
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();
   const [deviceList, setDeviceList] = useState<IDevice[]>([]);
-  
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getDeviceData();
-        setDeviceList(data); // Set data directly as an array
+        setDeviceList(data);
       } catch (error) {
         console.error("Error fetching device data:", error);
       }
@@ -25,7 +32,6 @@ const Devices: React.FC = () => {
     fetchData();
   }, []);
 
-  // Extract unique locations and filter out null values
   const uniqueLocations = Array.from(
     new Set(
       deviceList
@@ -34,9 +40,8 @@ const Devices: React.FC = () => {
     )
   );
 
-  const navigate = useNavigate();
-  const handleClick = () => {
-      navigate("/adddevice");
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
   };
 
   return (
@@ -60,10 +65,8 @@ const Devices: React.FC = () => {
             DEVICES
           </Typography>
           <Button
-          onClick={handleClick}
-            type="submit"
+            onClick={toggleModal}
             sx={{
-              // px: 4,
               color: "#FFFFFB",
               backgroundColor: "#F25A28",
               fontSize: "1rem",
@@ -71,10 +74,6 @@ const Devices: React.FC = () => {
               borderRadius: "70px",
               width: "8rem",
               height: "2.5rem",
-              "&:focus": {
-                outline: "none",
-                color: "#FFFFFB",
-              },
               "&:hover": {
                 backgroundColor: "#F37E58",
               },
@@ -94,12 +93,24 @@ const Devices: React.FC = () => {
       >
         <Grid container spacing={3} justifyContent="flex-start" marginTop={2}>
           {uniqueLocations.map((location, index) => (
-            <Grid item xs={12} key={index} >
-              <DevicesComponents  location={location} />
+            <Grid item xs={12} key={index}>
+              <DevicesComponents location={location} />
             </Grid>
           ))}
         </Grid>
       </Box>
+
+      {/* Modal for Add Device */}
+      <Dialog open={isModalOpen} onClose={toggleModal} fullWidth maxWidth="md">
+        <DialogTitle>
+          <Typography variant="h6" component="div">
+            New
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <AddDevice /> {/* Render AddDevice form */}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

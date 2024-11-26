@@ -1,334 +1,304 @@
-import useWindowSize from "../hooks/useWindowSize";
-import { Box, Button, Typography, TextField } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Typography,
+  TextField,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  ToggleButton,
+  ToggleButtonGroup,
+  Paper,
+} from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import useWindowSize from "../hooks/useWindowSize";
+import axios from "axios";
 
-const AddDevice = () => {
+const AddDevice: React.FC = () => {
   const windowSize = useWindowSize();
+  const [alignment, setAlignment] = useState<string>("IP");
+
+  // Remove unused snmpVersion state
+  const [hostname, sethostname] = useState<string>(""); // Host name
+  const [ip_address, setip_address] = useState<string>("");
+  const [snmp_port, setsnmp_port] = useState<string>("");
+  const [snmp_version, setsnmp_version] = useState<string>("");
+  const [snmp_community, setsnmp_community] = useState<string>("");
+  const [hostgroup, sethostgroup] = useState<string>("");
+  const [templates, settemplates] = useState<string>("");
+
+  const handleAlignmentChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string | null
+  ) => {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment);
+    }
+  };
+
+  // Update handleVersionChange to use setsnmp_version
+  const handleVersionChange = (event: SelectChangeEvent) => {
+    setsnmp_version(event.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const success = await StoreNewhost(hostname, hostgroup, snmp_version);
+    if (success) {
+      // Clear form fields after successful submission
+      sethostname("");
+      sethostgroup("");
+      setsnmp_version("");
+      alert("Device added successfully!");
+    } else {
+      alert("Failed to add device. Please try again.");
+    }
+  };
+
+  const textFieldProps = {
+    size: "small" as const,
+    fullWidth: true,
+    sx: {
+      backgroundColor: "white",
+      "& .MuiInputBase-input": {
+        fontSize: 14,
+      },
+    },
+  };
+
+  const typographyProps = {
+    fontSize: 14,
+  };
+
+  const StoreNewhost = async (
+    hostname: string,
+    hostgroup: string,
+    snmp_version: string
+  ): Promise<boolean> => {
+    try {
+      await axios.post("/host/createHost", {
+        records: [
+          {
+            fields: {
+              hostname,
+              hostgroup,
+              snmp_version,
+            },
+          },
+        ],
+      });
+      return true;
+    } catch (error) {
+      console.error("Error recording New Host:", error);
+      return false;
+    }
+  };
 
   return (
-    <>
+    <Box sx={{ p: 0, width: "100%" }}>
       {windowSize.width > 600 && (
-        <Box
-          sx={{
-            width: 1,
-            display: "flex",
-            justifyContent: "flex-start",
-            marginTop: 5,
-          }}
-        >
-          <Typography
-            variant="h4"
-            component="h1"
-            fontWeight={600}
-            color={"#242D5D"}
-          >
-            New Host
-          </Typography>
-        </Box>
+        <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 0 }} />
       )}
-      <Box
-        sx={{
-          width: 1,
-          marginTop: 2,
-          height: "auto",
-          display: "flex",
-        }}
-      >
+
+      <Paper elevation={0} sx={{ p: 2, backgroundColor: "#FFFFFB" }}>
         <Box
-          sx={{
-            backgroundColor: "#FFFFFB",
-            flex: 1,
-            display: "flex",
-            borderRadius: 3,
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-            py: 3,
-            px: 3,
-          }}
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          {windowSize.width < 1100 && (
-            <Typography
-              align="center"
-              sx={{
-                color: "#242D5D",
-                fontWeight: 400,
-                fontSize: 25,
-              }}
-            ></Typography>
-          )}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: 1,
-              mt: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-              <Typography sx={{ color: "red" }}>*</Typography>
-              <Typography sx={{ ml: 1 }}>Host name</Typography>
+          {/* Host Name */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                Host name
+              </Typography>
             </Box>
             <TextField
-              sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 44,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
+              {...textFieldProps}
+              value={hostname}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                sethostname(e.target.value)
+              }
             />
           </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: 1,
-              mt: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-              <Typography sx={{ ml: 2 }}>Templates</Typography>
+          {/* Templates */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography sx={{ minWidth: 120 }} {...typographyProps}>
+              Templates
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+              <TextField
+                {...textFieldProps}
+                value={templates}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  settemplates(e.target.value)
+                }
+              />
+              <Button variant="contained" size="small" sx={{ fontSize: 14 }}>
+                Select
+              </Button>
             </Box>
-            <TextField
-              sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 44,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: 1,
-              mt: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-              <Typography sx={{ color: "red" }}>*</Typography>
-              <Typography sx={{ ml: 1 }}>Host groups</Typography>
-            </Box>
-            <TextField
-              sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 44,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-          </Box>
-          <Box sx={{ width: 1 }}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: 1,
-                mt: 2,
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-                <Typography sx={{ ml: 2 }}>Interfaces</Typography>
-                <Typography sx={{ ml: 10, color: "grey" }}>Type</Typography>
-                <Typography sx={{ ml: 4, color: "grey" }}>
-                  IP address
-                </Typography>
-                <Typography sx={{ ml: 12, color: "grey" }}>DNS name</Typography>
-                <Typography sx={{ ml: 12, color: "grey" }}>
-                  Connect to
-                </Typography>
-                <Typography sx={{ ml: 3, color: "grey" }}>Port</Typography>
-                <Typography sx={{ ml: 10, color: "grey" }}>Default</Typography>
-              </Box>
-            </Box>
-            <Box sx={{ display: "flex" }}>
-              <Typography sx={{ ml: 27, mr: 3.5 }}>SNMP</Typography>
-              <TextField
-              sx={{
-                width: "15%",
-                textAlign: "right",
-                mr: 1,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-              <TextField
-              sx={{
-                width: "15%",
-                textAlign: "right",
-                mr: 1,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-              <TextField
-              sx={{
-                width: "9%",
-                textAlign: "right",
-                mr: 1,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-              <TextField
-              sx={{
-                width: "10%",
-                textAlign: "right",
-                mr: 1,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-              <Typography
-                sx={{
-                  height: "auto",
-                  textAlign: "right",
-                  mr: 1,
-                  minHeight: 1,
-                  display: "flex",
-                }}
-              >
-                <RadioButtonCheckedIcon sx={{ mr: 0.5 }} />
-                remove
+
+          {/* Host Groups */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                Host groups
               </Typography>
             </Box>
-            <Box sx={{ display: "flex", mt: 2 }}>
-              <Typography sx={{ ml: 27, mr: 3.5, color: "red" }}>*</Typography>
-              <Typography sx={{ mr: 2 }}>SNMP version</Typography>
+            <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
               <TextField
-              sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 30,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
-            </Box>
-            <Box sx={{ display: "flex", mt: 2 }}>
-              <Typography sx={{ ml: 27, mr: 3.5, color: "red" }}>*</Typography>
-              <Typography sx={{ mr: 2 }}>SNMP community</Typography>
-              <TextField
-              sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 30,
-              }}
-              id="outlined-basic"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  height: "30px", // Set your desired height here
-                },
-              }}
-            />
+                {...textFieldProps}
+                value={hostgroup}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  sethostgroup(e.target.value)
+                }
+              />
+              <Button variant="contained" size="small" sx={{ fontSize: 14 }}>
+                Select
+              </Button>
             </Box>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: 1,
-              mt: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-              <Typography sx={{ ml: 2, mr: 1 }}>Description</Typography>
+
+          {/* Interfaces */}
+          <Box sx={{ mt: 2 }}>
+            <Box sx={{ display: "flex", gap: 4, mb: 1, px: 2 }}>
+              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
+                Type
+              </Typography>
+              <Typography {...typographyProps}>IP address</Typography>
+              <Typography {...typographyProps}>DNS name</Typography>
+              <Typography {...typographyProps}>Connect to</Typography>
+              <Typography {...typographyProps}>Port</Typography>
+              <Typography {...typographyProps}>Default</Typography>
             </Box>
-            <TextField sx={{
-                width: "40%",
-                textAlign: "right",
-                mr: 44,
-              }}
-          id="outlined-multiline-static"
-          multiline
-          rows={4}
-        />
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
+                SNMP
+              </Typography>
+              <TextField
+                {...textFieldProps}
+                value={ip_address}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setip_address(e.target.value)
+                }
+                sx={{ maxWidth: 200 }}
+              />
+              <TextField {...textFieldProps} sx={{ maxWidth: 200 }} />
+              <ToggleButtonGroup
+                color="primary"
+                value={alignment}
+                exclusive
+                onChange={handleAlignmentChange}
+                size="small"
+                sx={{ "& .MuiToggleButton-root": { fontSize: 14 } }}
+              >
+                <ToggleButton value="IP">IP</ToggleButton>
+                <ToggleButton value="DNS">DNS</ToggleButton>
+              </ToggleButtonGroup>
+              <TextField
+                {...textFieldProps}
+                value={snmp_port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setsnmp_port(e.target.value)
+                }
+                sx={{ maxWidth: 100 }}
+              />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <RadioButtonCheckedIcon sx={{ fontSize: 14 }} />
+                <Typography {...typographyProps}>remove</Typography>
+              </Box>
+            </Box>
           </Box>
+
+          {/* SNMP Version */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                SNMP version
+              </Typography>
+            </Box>
+            <FormControl sx={{ minWidth: 200 }} size="small">
+              <Select
+                value={snmp_version}
+                onChange={handleVersionChange}
+                displayEmpty
+                sx={{
+                  fontSize: 14,
+                  "& .MuiMenuItem-root": { fontSize: 14 },
+                }}
+              >
+                <MenuItem value="v1">SNMPv1</MenuItem>
+                <MenuItem value="v2">SNMPv2</MenuItem>
+                <MenuItem value="v3">SNMPv3</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                SNMP community
+              </Typography>
+            </Box>
+            <TextField
+              {...textFieldProps}
+              value={snmp_community}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setsnmp_community(e.target.value)
+              }
+            />
+          </Box>
+
+          {/* Action Buttons */}
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end", // Align buttons to the right
-              textAlign: "right",
-              width: 1,
-              mt: 2, // Add margin-top for spacing if needed
-            }}
+            sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}
           >
             <Button
-              sx={{
-                border: 1,
-                borderRadius: 1,
-                mr: 1,
-                px: 2,
-                color: "black",
-              }}
+              type="submit"
+              variant="outlined"
+              color="primary"
+              sx={{ fontSize: 14 }}
             >
               Add
             </Button>
             <Button
-              sx={{
-                border: 1,
-                borderRadius: 1,
-                px: 2,
-                color: "black",
+              variant="outlined"
+              color="primary"
+              sx={{ fontSize: 14 }}
+              onClick={() => {
+                sethostname("");
+                setip_address("");
+                setsnmp_port("");
+                setsnmp_version("");
+                setsnmp_community("");
+                sethostgroup("");
+                settemplates("");
               }}
             >
               Cancel
             </Button>
           </Box>
         </Box>
-      </Box>
-    </>
+      </Paper>
+    </Box>
   );
 };
 
