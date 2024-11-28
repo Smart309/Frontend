@@ -132,7 +132,9 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   return (
     <Box sx={{ p: 0, width: "100%" }}>
       {windowSize.width > 600 && (
-        <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 0, mt: 1 }} />
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-start", mb: 0, mt: 1 }}
+        />
       )}
 
       <Paper elevation={0} sx={{ p: 2, backgroundColor: "#FFFFFB" }}>
@@ -157,8 +159,12 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           {/* Host Name */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>*</Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>Host name</Typography>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                Host name
+              </Typography>
             </Box>
             <TextField
               {...textFieldProps}
@@ -169,7 +175,9 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
           {/* Templates */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography sx={{ minWidth: 120 }} {...typographyProps}>Templates</Typography>
+            <Typography sx={{ minWidth: 120 }} {...typographyProps}>
+              Templates
+            </Typography>
             <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
               <TextField
                 {...textFieldProps}
@@ -185,8 +193,12 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           {/* Host Groups */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>*</Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>Host groups</Typography>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                Host groups
+              </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
               <TextField
@@ -203,7 +215,9 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           {/* Interfaces */}
           <Box sx={{ mt: 2 }}>
             <Box sx={{ display: "flex", gap: 4, mb: 1, px: 2 }}>
-              <Typography sx={{ minWidth: 100 }} {...typographyProps}>Type</Typography>
+              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
+                Type
+              </Typography>
               <Typography {...typographyProps}>IP address</Typography>
               <Typography {...typographyProps}>DNS name</Typography>
               <Typography {...typographyProps}>Connect to</Typography>
@@ -211,8 +225,19 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
               <Typography {...typographyProps}>Default</Typography>
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography sx={{ minWidth: 100 }} {...typographyProps}>SNMP</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                "& .MuiInputBase-input": {
+                  fontSize: 14,
+                },
+              }}
+            >
+              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
+                SNMP
+              </Typography>
               <TextField
                 {...textFieldProps}
                 value={ip_address}
@@ -226,7 +251,9 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                 exclusive
                 onChange={handleAlignmentChange}
                 size="small"
-                sx={{ "& .MuiToggleButton-root": { fontSize: 14, color: "black" } }}
+                sx={{
+                  "& .MuiToggleButton-root": { fontSize: 14, color: "black" },
+                }}
               >
                 <ToggleButton value="IP">IP</ToggleButton>
                 <ToggleButton value="DNS">DNS</ToggleButton>
@@ -247,8 +274,12 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           {/* SNMP Version */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>*</Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>SNMP version</Typography>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                SNMP version
+              </Typography>
             </Box>
             <FormControl sx={{ minWidth: 200 }} size="small">
               <Select
@@ -270,8 +301,12 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           {/* SNMP Community */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>*</Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>SNMP community</Typography>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                SNMP community
+              </Typography>
             </Box>
             <TextField
               {...textFieldProps}
@@ -303,19 +338,33 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                 {...textFieldProps}
                 value={details_location}
                 onChange={(e) => setdetails_location(e.target.value)}
-                sx={{ mb: 2, width: "90%" }}
+                sx={{
+                  mb: 2,
+                  width: "90%",
+                  "& .MuiInputBase-input": {
+                    fontSize: 14,
+                  },
+                }}
               />
               <TextField
                 {...textFieldProps}
                 value={details_room}
                 onChange={(e) => setdetails_room(e.target.value)}
-                sx={{ mb: 0, width: "90%" }}
+                sx={{
+                  mb: 0,
+                  width: "90%",
+                  "& .MuiInputBase-input": {
+                    fontSize: 14,
+                  },
+                }}
               />
             </Box>
           </Box>
 
           {/* Action Buttons */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}
+          >
             <Button
               type="submit"
               variant="outlined"
