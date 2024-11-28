@@ -1,13 +1,17 @@
+import React, { useState } from "react";
 import { Typography, Box, Stack } from "@mui/material";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ErrorIcon from "@mui/icons-material/Error";
-import useWindowSize from "../hooks/useWindowSize";
-import { useNavigate, useLocation } from "react-router";
 import DnsIcon from "@mui/icons-material/Dns";
 import CottageIcon from "@mui/icons-material/Cottage";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SettingsIcon from "@mui/icons-material/Settings";
+import DatabaseIcon from "@mui/icons-material/Storage";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { useNavigate, useLocation } from "react-router-dom";
+import useWindowSize from "../hooks/useWindowSize";
 
 interface SidebarProps {
   isHideSidebar: boolean;
@@ -24,12 +28,26 @@ export const SlideBarItems = [
   },
   {
     id: 1,
-    icon: <DnsIcon sx={{ fontSize: 20 }} />,
-    name: "Devices",
-    path: "/devices",
+    icon: <DatabaseIcon sx={{ fontSize: 20 }} />,
+    name: "Data Collection",
+    // path: "/devices",
     newIcon: "",
+    subItems: [
+      {
+        id: "sub-1",
+        icon: <DnsIcon sx={{ fontSize: 20 }} />,
+        name: "Devices",
+        path: "/devices",
+        newIcon: "",
+      },{
+        id: "sub-2",
+        icon: <DnsIcon sx={{ fontSize: 20 }} />,
+        name: "Templates",
+        path: "/templates",
+        newIcon: "",
+      },
+    ],
   },
-
   {
     id: 2,
     icon: <TimelineOutlinedIcon sx={{ fontSize: 20 }} />,
@@ -71,63 +89,160 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const windowSize = useWindowSize();
   const navigate = useNavigate();
   const location = useLocation();
+  const [expandedItems, setExpandedItems] = useState<number[]>([]);
+
+  const toggleExpand = (itemId: number) => {
+    setExpandedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  const handleItemClick = (item: any) => {
+    if (item.subItems) {
+      toggleExpand(item.id);
+      navigate(item.subItems[0].path);
+    } else {
+      navigate(item.path);
+    }
+  };
 
   return (
     <Stack direction="column" spacing="10px">
       {SlideBarItems.map((item) => (
-        <Box
-          key={item.id}
-          onClick={() => navigate(item.path)}
-          sx={{
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            borderRadius: "5px",
-            p: "10px 25px",
-            m: 0,
-            backgroundColor:
-              location.pathname === item.path ||
-              (item.name === "Dashboard" && location.pathname.includes("-"))
-                ? "#F25A28"
-                : "transparent",
-            color:
-              location.pathname === item.path ||
-              (item.name === "Dashboard" && location.pathname.includes("-"))
-                ? "#FFFFFB"
-                : "#242D5D",
-            "&:hover": {
+        <div key={item.id}>
+          <Box
+            onClick={() => handleItemClick(item)}
+            sx={{
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderRadius: "5px",
+              p: "10px 25px",
+              m: 0,
               backgroundColor:
-                location.pathname !== item.path ? "#FFEAE3" : "#F25A28",
-            },
-            transition: "background-color 0.3s ease",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {item.icon}
-            <Box
-              sx={{
-                overflow: "hidden",
-                maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
-                transition: "max-width 0.5s ease",
-              }}
-            >
-              <Typography
+                location.pathname === item.path ||
+                item.subItems?.some((sub) => sub.path === location.pathname) ||
+                (item.name === "Dashboard" && location.pathname.includes("-"))
+                  ? "#F25A28"
+                  : "transparent",
+              color:
+                location.pathname === item.path ||
+                item.subItems?.some((sub) => sub.path === location.pathname) ||
+                (item.name === "Dashboard" && location.pathname.includes("-"))
+                  ? "#FFFFFB"
+                  : "#242D5D",
+              // "&:hover": {
+              //   backgroundColor:
+              //     location.pathname !== item.path ? "#FFEAE3" : "#F25A28",
+              // },
+              transition: "background-color 0.3s ease",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              {item.icon}
+              <Box
                 sx={{
-                  marginLeft: "30px",
-                  fontSize: 16,
-                  fontWeight: 500,
-                  paddingRight: 1,
-                  whiteSpace: "nowrap",
-                  opacity: !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
-                  transition: "opacity 0.5s ease",
+                  overflow: "hidden",
+                  maxWidth:
+                    !isHideSidebar && windowSize.width >= 1100
+                      ? "200px"
+                      : "0px",
+                  transition: "max-width 0.5s ease",
                 }}
               >
-                {item.name}
-              </Typography>
+                <Typography
+                  sx={{
+                    marginLeft: "30px",
+                    fontSize: 16,
+                    fontWeight: 500,
+                    paddingRight: 1,
+                    whiteSpace: "nowrap",
+                    opacity: !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                    transition: "opacity 0.5s ease",
+                  }}
+                >
+                  {item.name}
+                </Typography>
+              </Box>
             </Box>
+            {item.subItems &&
+              !isHideSidebar &&
+              windowSize.width >= 1100 &&
+              (expandedItems.includes(item.id) ? (
+                <KeyboardArrowDownIcon sx={{ fontSize: 20 }} />
+              ) : (
+                <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />
+              ))}
           </Box>
-          {item.newIcon && <span>{item.newIcon}</span>}
-        </Box>
+
+          {/* Sub-items */}
+          {item.subItems && expandedItems.includes(item.id) && (
+            <div>
+              {item.subItems.map((subItem) => (
+                <Box
+                  key={subItem.id}
+                  onClick={() => navigate(subItem.path)}
+                  sx={{
+                    mt:1,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    borderRadius: "100px",
+                    p: "5px 10px",
+                    ml: "50px",
+                    backgroundColor:
+                      location.pathname === subItem.path
+                        ? "#f57f58"
+                        : "transparent",
+                    color:
+                      location.pathname === subItem.path
+                        ? "#FFFFFB"
+                        : "#242D5D",
+                    "&:hover": {
+                      backgroundColor:
+                        location.pathname !== subItem.path
+                          ? "#FFEAE3"
+                          : "#F25A28",
+                    },
+                    transition: "background-color 0.3s ease",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    
+                    <Box
+                      sx={{
+                        overflow: "hidden",
+                        maxWidth:
+                          !isHideSidebar && windowSize.width >= 1100
+                            ? "200px"
+                            : "0px",
+                        transition: "max-width 0.5s ease",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          marginLeft: "30px",
+                          fontSize: 16,
+                          fontWeight: 500,
+                          paddingRight: 1,
+                          whiteSpace: "nowrap",
+                          opacity:
+                            !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                          transition: "opacity 0.5s ease",
+                        }}
+                      >
+                        {subItem.name}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </div>
+          )}
+        </div>
       ))}
     </Stack>
   );

@@ -16,7 +16,7 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import useWindowSize from "../hooks/useWindowSize";
 import axios from "axios";
 
-const AddDevice: React.FC = () => {
+const AddTemplate: React.FC = () => {
   const windowSize = useWindowSize();
   const [alignment, setAlignment] = useState<string>("IP");
 
@@ -94,7 +94,7 @@ const AddDevice: React.FC = () => {
     templates: string
   ): Promise<boolean> => {
     try {
-      await axios.post("http://127.0.0.1:3000/host", {
+      await axios.post("http://127.0.0.1:3000/host/createHost", {
         hostname,
         ip_address,
         snmp_port,
@@ -280,7 +280,6 @@ const AddDevice: React.FC = () => {
               }
             />
           </Box>
-          
 
           {/* Action Buttons */}
           <Box
@@ -317,4 +316,4 @@ const AddDevice: React.FC = () => {
   );
 };
 
-export default AddDevice;
+export default AddTemplate;

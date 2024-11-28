@@ -17,6 +17,7 @@ import ContactUs from "./pages/ContactUs";
 import Devices from "./pages/Devices";
 import DeviceDetail from "./pages/DeviceDetail";
 import AddDevice from "./pages/AddDevice";
+import Templates from "./pages/Template";
 
 const App = () => {
   return (
@@ -34,7 +35,8 @@ const App = () => {
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/devices" element={<Devices />} />
             <Route path="/devicedetail" element={<DeviceDetail />} />
-            <Route path="/adddevice" element={<AddDevice />} />
+            {/* <Route path="/adddevice" element={<AddDevice />} /> */}
+            <Route path="/templates" element={<Templates />} />
           </Route>
         </Routes>
       </Router>

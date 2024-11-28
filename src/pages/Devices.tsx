@@ -9,40 +9,57 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
-import DevicesComponents from "../components/devicesComponents/DevicesComponents";
-import { getDeviceData } from "../api/DeviceDetailApi";
-import { IDevice } from "../interface/IDevice";
 import AddDevice from "./AddDevice"; // Import the AddDevice component
+
+interface DeviceDetails {
+  location: string;
+  room: string;
+}
+
+interface Device {
+  _id: string;
+  hostname: string;
+  details: DeviceDetails | null;
+}
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();
-  const [deviceList, setDeviceList] = useState<IDevice[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [loading, setLoading] = useState(true); // State for loading
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDevices = async () => {
       try {
-        const data = await getDeviceData();
-        setDeviceList(data);
+        const response = await fetch("http://localhost:3000/host"); // API endpoint
+        if (!response.ok) {
+          throw new Error("Failed to fetch devices");
+        }
+        const result = await response.json();
+        setDevices(result.data); // Access the "data" property in the response
+        setLoading(false); // Turn off loading
       } catch (error) {
-        console.error("Error fetching device data:", error);
+        console.error("Error fetching devices:", error);
+        setLoading(false); // Turn off loading
       }
     };
 
-    fetchData();
+    fetchDevices();
   }, []);
-
-  const uniqueLocations = Array.from(
-    new Set(
-      deviceList
-        .map((device) => device.location)
-        .filter((loc): loc is string => loc !== null)
-    )
-  );
 
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
   };
+
+  // Group devices by location
+  const groupedDevices = devices.reduce((acc, device) => {
+    const location = device.details?.location || "Unknown Location";
+    if (!acc[location]) {
+      acc[location] = [];
+    }
+    acc[location].push(device);
+    return acc;
+  }, {} as Record<string, any[]>);
 
   return (
     <>
@@ -83,21 +100,42 @@ const Devices: React.FC = () => {
           </Button>
         </Box>
       )}
-      <Box
-        sx={{
-          width: 1,
-          marginTop: 2,
-          height: "auto",
-          display: "flex",
-        }}
-      >
-        <Grid container spacing={3} justifyContent="flex-start" marginTop={2}>
-          {uniqueLocations.map((location, index) => (
-            <Grid item xs={12} key={index}>
-              <DevicesComponents location={location} />
-            </Grid>
-          ))}
-        </Grid>
+
+      <Box sx={{ marginTop: 2 }}>
+        {loading ? (
+          <Typography>Loading...</Typography>
+        ) : (
+          Object.entries(groupedDevices).map(([location, devices]) => (
+            <Box key={location} sx={{ marginBottom: 4 }}>
+              {/* Group Header */}
+              <Typography variant="h5" fontWeight={600} sx={{ marginBottom: 2 }}>
+                {location}
+              </Typography>
+              {/* Devices under this location */}
+              <Grid container spacing={2}>
+                {devices.map((device) => (
+                  <Grid item xs={12} sm={6} md={4} key={device._id}>
+                    <Box
+                      sx={{
+                        padding: 2,
+                        border: "1px solid #ddd",
+                        borderRadius: 2,
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      <Typography variant="h6" fontWeight={600}>
+                        {device.hostname}
+                      </Typography>
+                      <Typography variant="body2">
+                        Room: {device.details?.room || "N/A"}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          ))
+        )}
       </Box>
 
       {/* Modal for Add Device */}
