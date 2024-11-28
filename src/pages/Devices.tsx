@@ -1,3 +1,4 @@
+// Devices.tsx
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -9,7 +10,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
-import AddDevice from "./AddDevice"; // Import the AddDevice component
+import AddDevice from "./AddDevice";
 
 interface DeviceDetails {
   location: string;
@@ -26,32 +27,35 @@ const Devices: React.FC = () => {
   const windowSize = useWindowSize();
   const [isModalOpen, setModalOpen] = useState(false);
   const [devices, setDevices] = useState<Device[]>([]);
-  const [loading, setLoading] = useState(true); // State for loading
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        const response = await fetch("http://localhost:3000/host"); // API endpoint
+        const response = await fetch("http://localhost:3000/host");
         if (!response.ok) {
           throw new Error("Failed to fetch devices");
         }
         const result = await response.json();
-        setDevices(result.data); // Access the "data" property in the response
-        setLoading(false); // Turn off loading
+        setDevices(result.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching devices:", error);
-        setLoading(false); // Turn off loading
+        setLoading(false);
       }
     };
 
     fetchDevices();
   }, []);
 
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
   };
 
-  // Group devices by location
   const groupedDevices = devices.reduce((acc, device) => {
     const location = device.details?.location || "Unknown Location";
     if (!acc[location]) {
@@ -59,7 +63,7 @@ const Devices: React.FC = () => {
     }
     acc[location].push(device);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, Device[]>);
 
   return (
     <>
@@ -108,7 +112,11 @@ const Devices: React.FC = () => {
           Object.entries(groupedDevices).map(([location, devices]) => (
             <Box key={location} sx={{ marginBottom: 4 }}>
               {/* Group Header */}
-              <Typography variant="h5" fontWeight={600} sx={{ marginBottom: 2 }}>
+              <Typography
+                variant="h5"
+                fontWeight={600}
+                sx={{ marginBottom: 2 }}
+              >
                 {location}
               </Typography>
               {/* Devices under this location */}
@@ -139,14 +147,14 @@ const Devices: React.FC = () => {
       </Box>
 
       {/* Modal for Add Device */}
-      <Dialog open={isModalOpen} onClose={toggleModal} fullWidth maxWidth="md">
-        <DialogTitle>
+      <Dialog open={isModalOpen} onClose={handleClose} fullWidth maxWidth="md">
+        <DialogTitle sx={{ borderBottom: 1, borderColor: "#a9a9a9" }}>
           <Typography variant="h6" component="div">
-            New
+            New Host
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <AddDevice /> {/* Render AddDevice form */}
+          <AddDevice onClose={handleClose} />
         </DialogContent>
       </Dialog>
     </>
