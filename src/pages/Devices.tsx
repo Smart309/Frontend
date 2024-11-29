@@ -1,5 +1,5 @@
-// Devices.tsx
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Grid,
@@ -14,17 +14,36 @@ import AddDevice from "./AddDevice";
 
 interface DeviceDetails {
   location: string;
-  room: string;
+  Room: string;
+  serialNo: string;
+  os: string;
+  type: string;
+  vendor: string;
+  hardware: string;
+}
+
+interface Item {
+  name_item: string;
+  oid: string;
+  type: string;
+  unit: string;
 }
 
 interface Device {
   _id: string;
   hostname: string;
-  details: DeviceDetails | null;
+  ip_address: string;
+  snmp_port: string;
+  snmp_version: string;
+  snmp_community: string;
+  hostgroup: string;
+  details: DeviceDetails;
+  items: Item[];
 }
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();
+  const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +73,12 @@ const Devices: React.FC = () => {
 
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
+  };
+
+  const handleDeviceClick = (device: Device) => {
+    navigate(`/devicedetail/${device.details.serialNo}`, {
+      state: { device },
+    });
   };
 
   const groupedDevices = devices.reduce((acc, device) => {
@@ -111,7 +136,6 @@ const Devices: React.FC = () => {
         ) : (
           Object.entries(groupedDevices).map(([location, devices]) => (
             <Box key={location} sx={{ marginBottom: 4 }}>
-              {/* Group Header */}
               <Typography
                 variant="h5"
                 fontWeight={600}
@@ -119,25 +143,48 @@ const Devices: React.FC = () => {
               >
                 {location}
               </Typography>
-              {/* Devices under this location */}
               <Grid container spacing={2}>
                 {devices.map((device) => (
                   <Grid item xs={12} sm={6} md={4} key={device._id}>
-                    <Box
+                    <Button
+                      onClick={() => handleDeviceClick(device)}
                       sx={{
-                        padding: 2,
-                        border: "1px solid #ddd",
-                        borderRadius: 2,
-                        backgroundColor: "#f9f9f9",
+                        width: "100%",
+                        textAlign: "left",
+                        padding: 0,
+                        "&:hover": {
+                          backgroundColor: "transparent",
+                        },
                       }}
                     >
-                      <Typography variant="h6" fontWeight={600}>
-                        {device.hostname}
-                      </Typography>
-                      <Typography variant="body2">
-                        Room: {device.details?.room || "N/A"}
-                      </Typography>
-                    </Box>
+                      <Box
+                        sx={{
+                          color: "black",
+                          width: "100%",
+                          padding: 2,
+                          border: "1px solid #ddd",
+                          borderRadius: 2,
+                          backgroundColor: "#f9f9f9",
+                          "&:hover": {
+                            backgroundColor: "#f0f0f0",
+                            cursor: "pointer",
+                          },
+                        }}
+                      >
+                        <Typography variant="h6" fontWeight={600} sx={{}}>
+                          {device.hostname}
+                        </Typography>
+                        <Typography variant="body2">
+                          Room: {device.details?.Room || "N/A"}
+                        </Typography>
+                        <Typography variant="body2">
+                          Type: {device.details?.type || "N/A"}
+                        </Typography>
+                        <Typography variant="body2">
+                          Serial: {device.details?.serialNo || "N/A"}
+                        </Typography>
+                      </Box>
+                    </Button>
                   </Grid>
                 ))}
               </Grid>
@@ -146,7 +193,6 @@ const Devices: React.FC = () => {
         )}
       </Box>
 
-      {/* Modal for Add Device */}
       <Dialog open={isModalOpen} onClose={handleClose} fullWidth maxWidth="md">
         <DialogTitle sx={{ borderBottom: 1, borderColor: "#a9a9a9" }}>
           <Typography variant="h6" component="div">

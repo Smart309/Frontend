@@ -34,8 +34,8 @@ const App = () => {
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/devices" element={<Devices />} />
-            <Route path="/devicedetail" element={<DeviceDetail />} />
-            {/* <Route path="/adddevice" element={<AddDevice />} /> */}
+            {/* <Route path="/devicedetail" element={<DeviceDetail />} /> */}
+            <Route path="/devicedetail/:serialNo" element={<DeviceDetail />} />
             <Route path="/templates" element={<Templates />} />
           </Route>
         </Routes>

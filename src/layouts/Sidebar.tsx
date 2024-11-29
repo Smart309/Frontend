@@ -30,7 +30,6 @@ export const SlideBarItems = [
     id: 1,
     icon: <DatabaseIcon sx={{ fontSize: 20 }} />,
     name: "Data Collection",
-    // path: "/devices",
     newIcon: "",
     subItems: [
       {
@@ -39,7 +38,8 @@ export const SlideBarItems = [
         name: "Devices",
         path: "/devices",
         newIcon: "",
-      },{
+      },
+      {
         id: "sub-2",
         icon: <DnsIcon sx={{ fontSize: 20 }} />,
         name: "Templates",
@@ -89,21 +89,23 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const windowSize = useWindowSize();
   const navigate = useNavigate();
   const location = useLocation();
-  const [expandedItems, setExpandedItems] = useState<number[]>([]);
-
-  const toggleExpand = (itemId: number) => {
-    setExpandedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
-  };
+  const [expandedItem, setExpandedItem] = useState<number | null>(
+    location.pathname.includes('/devices') || location.pathname.includes('/templates') ? 1 : null
+  );
 
   const handleItemClick = (item: any) => {
     if (item.subItems) {
-      toggleExpand(item.id);
-      navigate(item.subItems[0].path);
+      if (expandedItem === item.id) {
+        // If clicking on already expanded item, collapse it
+        setExpandedItem(null);
+      } else {
+        // Expand the clicked item and navigate to first sub-item
+        setExpandedItem(item.id);
+        navigate(item.subItems[0].path);
+      }
     } else {
+      // For non-expandable items, just navigate and collapse any expanded item
+      setExpandedItem(null);
       navigate(item.path);
     }
   };
@@ -134,10 +136,6 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                 (item.name === "Dashboard" && location.pathname.includes("-"))
                   ? "#FFFFFB"
                   : "#242D5D",
-              // "&:hover": {
-              //   backgroundColor:
-              //     location.pathname !== item.path ? "#FFEAE3" : "#F25A28",
-              // },
               transition: "background-color 0.3s ease",
             }}
           >
@@ -171,7 +169,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
             {item.subItems &&
               !isHideSidebar &&
               windowSize.width >= 1100 &&
-              (expandedItems.includes(item.id) ? (
+              (expandedItem === item.id ? (
                 <KeyboardArrowDownIcon sx={{ fontSize: 20 }} />
               ) : (
                 <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />
@@ -179,14 +177,14 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
           </Box>
 
           {/* Sub-items */}
-          {item.subItems && expandedItems.includes(item.id) && (
+          {item.subItems && expandedItem === item.id && (
             <div>
               {item.subItems.map((subItem) => (
                 <Box
                   key={subItem.id}
                   onClick={() => navigate(subItem.path)}
                   sx={{
-                    mt:1,
+                    mt: 1,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
@@ -211,7 +209,6 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    
                     <Box
                       sx={{
                         overflow: "hidden",
