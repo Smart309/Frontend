@@ -14,6 +14,7 @@ import {
   Paper,
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import useWindowSize from "../hooks/useWindowSize";
 import axios from "axios";
 
@@ -38,6 +39,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const [templates, settemplates] = useState<string>("");
   const [details_location, setdetails_location] = useState<string>("");
   const [details_room, setdetails_room] = useState<string>("");
+  const [remove, setremove] = useState<boolean>(false);
 
   const details = {
     location: details_location,
@@ -127,6 +129,10 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
   const typographyProps = {
     fontSize: 14,
+  };
+
+  const handleToggle = () => {
+    setremove((prevState) => !prevState); // Toggle the state
   };
 
   return (
@@ -279,6 +285,17 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                     fontSize: 14,
                     color: "black",
                     width: "95%",
+                    "&.Mui-selected": {
+                      color: "blue", // Text color when selected
+                      backgroundColor: "rgba(0, 0, 255, 0.1)", // Optional background color
+                    },
+                    "&.Mui-selected:hover": {
+                      backgroundColor: "rgba(0, 0, 255, 0.2)", // Hover style when selected
+                    },
+                    "&:focus": {
+                      outline: "none", // Remove focus outline
+                      boxShadow: "none", // Remove focus shadow
+                    },
                   },
                 }}
               >
@@ -307,7 +324,16 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
               >
-                <RadioButtonCheckedIcon sx={{ fontSize: 14 }} />
+                <Box
+                  sx={{ color: "black", cursor: "pointer" }}
+                  onClick={handleToggle}
+                >
+                  {remove ? (
+                    <RadioButtonCheckedIcon sx={{ fontSize: 14 }} />
+                  ) : (
+                    <RadioButtonUncheckedIcon sx={{ fontSize: 14 }} />
+                  )}
+                </Box>
                 <Typography {...typographyProps}>remove</Typography>
               </Box>
             </Box>

@@ -39,6 +39,7 @@ interface Device {
   hostgroup: string;
   details: DeviceDetails;
   items: Item[];
+  status: number;
 }
 
 const Devices: React.FC = () => {
@@ -139,7 +140,7 @@ const Devices: React.FC = () => {
               <Typography
                 variant="h5"
                 fontWeight={600}
-                sx={{ marginBottom: 2 }}
+                sx={{ marginBottom: 2, textAlign: "left", color: "blue" }}
               >
                 {location}
               </Typography>

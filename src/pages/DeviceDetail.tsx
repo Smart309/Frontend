@@ -31,6 +31,7 @@ interface Device {
   hostgroup: string;
   details: DeviceDetails;
   items: Item[];
+  status: number;
 }
 
 const DeviceDetail = () => {
@@ -47,7 +48,7 @@ const DeviceDetail = () => {
         try {
           const response = await fetch(`http://localhost:3000/host`);
           if (!response.ok) {
-            throw new Error('Failed to fetch device data');
+            throw new Error("Failed to fetch device data");
           }
           const result = await response.json();
           const device = result.data.find(
@@ -127,7 +128,9 @@ const DeviceDetail = () => {
               </Typography>
               <Typography>Location: {deviceData.details.location}</Typography>
               <Typography>Room: {deviceData.details.Room}</Typography>
-              <Typography>Serial Number: {deviceData.details.serialNo}</Typography>
+              <Typography>
+                Serial Number: {deviceData.details.serialNo}
+              </Typography>
               <Typography>OS: {deviceData.details.os}</Typography>
               <Typography>Type: {deviceData.details.type}</Typography>
               <Typography>Vendor: {deviceData.details.vendor}</Typography>
@@ -151,7 +154,7 @@ const DeviceDetail = () => {
             fontWeight={600}
             color={"#242D5D"}
           >
-            MONITORED ITEMS
+            INTERFACE
           </Typography>
           <Button
             sx={{
@@ -209,3 +212,5 @@ const DeviceDetail = () => {
 };
 
 export default DeviceDetail;
+
+//end process in this page

@@ -15,30 +15,41 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { getAlertData } from "../api/AlertApi";
 
-interface IAlert {
-  startDate: string;
-  startTime: string;
+interface Alert {
   problem: string;
+  pDetail: string;
+  hostId: string;
   area: string;
-  problemStatus: boolean;
+  startDate: Date;
+  startTime: string;
+  endDate: Date;
+  endTime: string;
+  pStatus: number;
 }
 
-const formatDate = (dateString: string) => {
+const formatDate = (date: string | Date) => {
   const englishMonths = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
-  const dateMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  
-  if (dateMatch) {
-    const year = dateMatch[1];
-    const month = parseInt(dateMatch[2], 10) - 1; 
-    const day = dateMatch[3];
-    return `${day} ${englishMonths[month]} ${year}`;
-  }
-  
-  return dateString; 
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  const year = dateObj.getFullYear();
+  const month = englishMonths[dateObj.getMonth()];
+  const day = String(dateObj.getDate()).padStart(2, "0");
+
+  return `${day} ${month} ${year}`;
 };
 
 const formatTime = (timeString: string) => {
@@ -47,7 +58,7 @@ const formatTime = (timeString: string) => {
 };
 
 const AlertsComponent = () => {
-  const [alerts, setAlerts] = useState<IAlert[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
@@ -56,12 +67,15 @@ const AlertsComponent = () => {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const fetchedAlerts = await getAlertData();
-        setAlerts(fetchedAlerts);
-      } catch (err) {
-        setError("Failed to fetch alerts");
-        console.error(err);
-      } finally {
+        const response = await fetch("http://localhost:3000/alert");
+        if (!response.ok) {
+          throw new Error("Failed to fetch alerts");
+        }
+        const result = await response.json();
+        setAlerts(result.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching devices:", error);
         setLoading(false);
       }
     };
@@ -120,10 +134,10 @@ const AlertsComponent = () => {
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
-              Date
+              Start DateTime
             </TableCell>
             <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
-              Time
+              End DateTime
             </TableCell>
             <TableCell
               align="center"
@@ -148,24 +162,28 @@ const AlertsComponent = () => {
         <TableBody>
           {alerts.map((alert, index) => (
             <TableRow key={index}>
-              <TableCell>{formatDate(alert.startDate)}</TableCell>
-              <TableCell>{formatTime(alert.startTime)}</TableCell>
+              <TableCell>
+                {formatDate(alert.startDate)} {alert.startTime}
+              </TableCell>
+              <TableCell>
+                {formatDate(alert.endDate)} {alert.endTime}
+              </TableCell>
               <TableCell align="center">{alert.problem}</TableCell>
               <TableCell align="center">{alert.area}</TableCell>
               <TableCell align="center">
                 <IconButton
                   aria-label="find"
                   onClick={handleSearchClick}
-                  disabled={!alert.problemStatus}
+                  disabled={!alert.pStatus}
                   sx={{
                     color: "white",
-                    backgroundColor: alert.problemStatus ? "#FF0000" : "gray",
+                    backgroundColor: alert.pStatus == 0 ? "#FF0000" : "red",
                     borderRadius: "100%",
                     "&:focus": {
                       outline: "none",
                     },
                     "&:hover": {
-                      backgroundColor: alert.problemStatus ? "#BF0000" : "gray",
+                      backgroundColor: alert.pStatus == 0 ? "#BF0000" : "gray",
                     },
                   }}
                 >
