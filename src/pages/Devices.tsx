@@ -197,7 +197,7 @@ const Devices: React.FC = () => {
       <Dialog open={isModalOpen} onClose={handleClose} fullWidth maxWidth="lg">
         <DialogTitle sx={{ borderBottom: 1, borderColor: "#a9a9a9" }}>
           <Typography variant="h6" component="div">
-            New Host
+            New Device
           </Typography>
         </DialogTitle>
         <DialogContent>
