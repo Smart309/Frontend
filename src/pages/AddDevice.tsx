@@ -64,15 +64,15 @@ interface DeviceDetails {
   room: string;
 }
 
-interface ItemRow {
+interface DeviceItems {
   id: number;
-  name: string;
+  name_item: string;
   oid: string;
   type: string;
   unit: string;
-  updateInterval: string;
-  history: string;
-  trend: string;
+  // updateInterval: string;
+  // history: string;
+  // trend: string;
 }
 
 const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
@@ -88,29 +88,29 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const [details_room, setdetails_room] = useState<string>("");
   const [tabvalue, setTabvalue] = React.useState("host"); //Tabview
 
-  const [itemRows, setItemRows] = useState<ItemRow[]>([
+  const [itemRows, setItemRows] = useState<DeviceItems[]>([
     {
       id: 1,
-      name: "",
+      name_item: "",
       oid: "",
       type: "",
       unit: "",
-      updateInterval: "",
-      history: "",
-      trend: "",
+      // updateInterval: "",
+      // history: "",
+      // trend: "",
     },
   ]);
 
   const handleAddRow = () => {
-    const newRow: ItemRow = {
+    const newRow: DeviceItems = {
       id: itemRows.length + 1,
-      name: "",
+      name_item: "",
       oid: "",
       type: "",
       unit: "",
-      updateInterval: "",
-      history: "",
-      trend: "",
+      // updateInterval: "",
+      // history: "",
+      // trend: "",
     };
     setItemRows([...itemRows, newRow]);
   };
@@ -123,7 +123,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
   const handleItemChange = (
     id: number,
-    field: keyof ItemRow,
+    field: keyof DeviceItems,
     value: string
   ) => {
     setItemRows(
@@ -140,6 +140,37 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
     setsnmp_version(event.target.value);
   };
 
+  // for all fields require
+  // const StoreNewhost = async (
+  //   hostname: string,
+  //   ip_address: string,
+  //   snmp_port: string,
+  //   snmp_version: string,
+  //   snmp_community: string,
+  //   hostgroup: string,
+  //   templates: string,
+  //   details: DeviceDetails,
+  //   items: DeviceItems[]
+  // ): Promise<boolean> => {
+  //   try {
+  //     await axios.post("http://127.0.0.1:3000/host", {
+  //       hostname,
+  //       ip_address,
+  //       snmp_port,
+  //       snmp_version,
+  //       snmp_community,
+  //       hostgroup,
+  //       templates,
+  //       details,
+  //       items,
+  //     });
+  //     return true;
+  //   } catch (error) {
+  //     console.error("Error recording New Host:", error);
+  //     return false;
+  //   }
+  // };
+
   const StoreNewhost = async (
     hostname: string,
     ip_address: string,
@@ -151,7 +182,8 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
     details: DeviceDetails
   ): Promise<boolean> => {
     try {
-      await axios.post("http://127.0.0.1:3000/host", {
+      // Create request body
+      const requestBody: any = {
         hostname,
         ip_address,
         snmp_port,
@@ -160,7 +192,18 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
         hostgroup,
         templates,
         details,
-      });
+      };
+
+      // Only add items to request if they have data
+      const filledItems = itemRows.filter(
+        (item) => item.name_item || item.oid || item.type || item.unit
+      );
+
+      if (filledItems.length > 0) {
+        requestBody.items = filledItems;
+      }
+
+      await axios.post("http://127.0.0.1:3000/host", requestBody);
       return true;
     } catch (error) {
       console.error("Error recording New Host:", error);
@@ -179,6 +222,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       hostgroup,
       templates,
       details
+      // itemRows
     );
     if (success) {
       sethostname("");
@@ -190,6 +234,15 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       settemplates("");
       setdetails_location("");
       setdetails_room("");
+      setItemRows([
+        {
+          id: 1,
+          name_item: "",
+          oid: "",
+          type: "",
+          unit: "",
+        },
+      ]);
       alert("Device added successfully!");
       onClose();
     } else {
@@ -554,166 +607,163 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
             </Box>
           </Paper>
         </TabPanel>
+
+        {/* Item Tabview */}
         <TabPanel value="item">
           <Paper elevation={0} sx={{ px: 2, backgroundColor: "#FFFFFB" }}>
             <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 1,
-              }}
+              component="form"
+              onSubmit={handleSubmit}
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
-              <Typography
+              <Box
                 sx={{
-                  fontSize: "1.1rem",
-                  color: "#a9a9a9",
-                  fontWeight: "semibold",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 1,
                 }}
               >
-                ITEMS
-              </Typography>
-              <IconButton onClick={handleAddRow} sx={{ color: "primary.main" }}>
-                <AddIcon
+                <Box sx={{ width: "100%" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "1.1rem",
+                      color: "#a9a9a9",
+                      fontWeight: "semibold",
+                    }}
+                  >
+                    ITEMS
+                  </Typography>
+                  <Box sx={{ borderTop: "2px solid #d9d9d9" }} />
+                </Box>
+                <IconButton
+                  onClick={handleAddRow}
+                  sx={{ color: "primary.main" }}
+                >
+                  <AddIcon
+                    sx={{
+                      color: "black",
+                      border: "2px solid",
+                      "&.Mui-selected": {},
+                      "&:focus": {
+                        outline: "none",
+                      },
+                    }}
+                  />
+                </IconButton>
+              </Box>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ width: 1 }}>
+                      <TableCell>Item's name</TableCell>
+                      <TableCell>OID</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Unit</TableCell>
+                      <TableCell>Update Interval</TableCell>
+                      <TableCell>History</TableCell>
+                      <TableCell>Trend</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {itemRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell>
+                          <TextField
+                            {...textFieldProps}
+                            value={row.name_item}
+                            onChange={(e) =>
+                              handleItemChange(
+                                row.id,
+                                "name_item",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            {...textFieldProps}
+                            value={row.oid}
+                            onChange={(e) =>
+                              handleItemChange(row.id, "oid", e.target.value)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            {...textFieldProps}
+                            value={row.type}
+                            onChange={(e) =>
+                              handleItemChange(row.id, "type", e.target.value)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            {...textFieldProps}
+                            value={row.unit}
+                            onChange={(e) =>
+                              handleItemChange(row.id, "unit", e.target.value)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField {...textFieldProps} />
+                        </TableCell>
+                        <TableCell>
+                          <TextField {...textFieldProps} />
+                        </TableCell>
+                        <TableCell>
+                          <TextField {...textFieldProps} />
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() => handleDeleteRow(row.id)}
+                            disabled={itemRows.length === 1}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              {/* Action Buttons */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                  mt: 1,
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={onClose}
+                  sx={{ fontSize: 14 }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="outlined"
                   sx={{
+                    fontSize: 14,
                     color: "black",
-                    border: "2px solid",
-                    "&.Mui-selected": {},
-                    "&:focus": {
-                      outline: "none",
+                    borderColor: "black",
+                    "&:hover": {
+                      color: "red",
+                      borderColor: "red",
                     },
                   }}
-                />
-              </IconButton>
-            </Box>
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ width: 1 }}>
-                    <TableCell>Item's name</TableCell>
-                    <TableCell>OID</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Unit</TableCell>
-                    <TableCell>Update Interval</TableCell>
-                    <TableCell>History</TableCell>
-                    <TableCell>Trend</TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {itemRows.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.name}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "name", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.oid}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "oid", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.type}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "type", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.unit}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "unit", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.updateInterval}
-                          onChange={(e) =>
-                            handleItemChange(
-                              row.id,
-                              "updateInterval",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.history}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "history", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          {...textFieldProps}
-                          value={row.trend}
-                          onChange={(e) =>
-                            handleItemChange(row.id, "trend", e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          onClick={() => handleDeleteRow(row.id)}
-                          disabled={itemRows.length === 1}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 2,
-                mt: 2,
-              }}
-            >
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={onClose}
-                sx={{ fontSize: 14 }}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="outlined"
-                sx={{
-                  fontSize: 14,
-                  color: "black",
-                  borderColor: "black",
-                  "&:hover": {
-                    color: "red",
-                    borderColor: "red",
-                  },
-                }}
-              >
-                Add
-              </Button>
+                >
+                  Add
+                </Button>
+              </Box>
             </Box>
           </Paper>
         </TabPanel>

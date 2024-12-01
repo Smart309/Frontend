@@ -41,6 +41,10 @@ const Templates: React.FC = () => {
     setModalOpen(!isModalOpen);
   };
 
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
   return (
     <>
       {windowSize.width > 600 && (
@@ -123,14 +127,14 @@ const Templates: React.FC = () => {
       </Box>
 
       {/* Modal for Add Template */}
-      <Dialog open={isModalOpen} onClose={toggleModal} fullWidth maxWidth="md">
-        <DialogTitle>
+      <Dialog open={isModalOpen} onClose={handleClose} fullWidth maxWidth="lg">
+        <DialogTitle sx={{ borderBottom: 1, borderColor: "#a9a9a9" }}>
           <Typography variant="h6" component="div">
             New Template
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <AddTemplate /> {/* Render AddTemplate form */}
+          <AddTemplate onClose={handleClose} />
         </DialogContent>
       </Dialog>
     </>

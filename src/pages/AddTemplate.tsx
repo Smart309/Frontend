@@ -11,12 +11,35 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Paper,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import useWindowSize from "../hooks/useWindowSize";
 import axios from "axios";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 
-const AddTemplate: React.FC = () => {
+interface ItemRow {
+  id: number;
+  name: string;
+  oid: string;
+  type: string;
+  unit: string;
+  updateInterval: string;
+  history: string;
+  trend: string;
+}
+
+interface AddTemplateProps {
+  onClose: () => void;
+}
+
+const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
   const windowSize = useWindowSize();
   const [alignment, setAlignment] = useState<string>("IP");
 
@@ -28,15 +51,6 @@ const AddTemplate: React.FC = () => {
   const [snmp_community, setsnmp_community] = useState<string>("");
   const [hostgroup, sethostgroup] = useState<string>("");
   const [templates, settemplates] = useState<string>("");
-
-  const handleAlignmentChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
-  ) => {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment);
-    }
-  };
 
   // Update handleVersionChange to use setsnmp_version
   const handleVersionChange = (event: SelectChangeEvent) => {
@@ -110,6 +124,49 @@ const AddTemplate: React.FC = () => {
     }
   };
 
+  const [itemRows, setItemRows] = useState<ItemRow[]>([
+    {
+      id: 1,
+      name: "",
+      oid: "",
+      type: "",
+      unit: "",
+      updateInterval: "",
+      history: "",
+      trend: "",
+    },
+  ]);
+
+  const handleAddRow = () => {
+    const newRow: ItemRow = {
+      id: itemRows.length + 1,
+      name: "",
+      oid: "",
+      type: "",
+      unit: "",
+      updateInterval: "",
+      history: "",
+      trend: "",
+    };
+    setItemRows([...itemRows, newRow]);
+  };
+
+  const handleDeleteRow = (id: number) => {
+    if (itemRows.length > 1) {
+      setItemRows(itemRows.filter((row) => row.id !== id));
+    }
+  };
+
+  const handleItemChange = (
+    id: number,
+    field: keyof ItemRow,
+    value: string
+  ) => {
+    setItemRows(
+      itemRows.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+    );
+  };
+
   return (
     <Box sx={{ p: 0, width: "100%" }}>
       {windowSize.width > 600 && (
@@ -122,14 +179,28 @@ const AddTemplate: React.FC = () => {
           onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          {/* Host Name */}
+          {/* Template section */}
+          <Typography
+            sx={{
+              mt: 0,
+              mb: -2,
+              fontSize: "1.1rem",
+              color: "#a9a9a9",
+              fontWeight: "semibold",
+            }}
+            {...typographyProps}
+          >
+            TEMPLATE
+          </Typography>
+          <Box sx={{ borderTop: "2px solid #d9d9d9" }} />
+
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 150 }}>
               <Typography color="error" {...typographyProps}>
                 *
               </Typography>
               <Typography sx={{ ml: 1 }} {...typographyProps}>
-                Host name
+                Template name
               </Typography>
             </Box>
             <TextField
@@ -140,176 +211,163 @@ const AddTemplate: React.FC = () => {
               }
             />
           </Box>
-
-          {/* Templates */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography sx={{ minWidth: 120 }} {...typographyProps}>
-              Templates
-            </Typography>
-            <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
-              <TextField
-                {...textFieldProps}
-                value={templates}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  settemplates(e.target.value)
-                }
-              />
-              <Button variant="contained" size="small" sx={{ fontSize: 14 }}>
-                Select
-              </Button>
-            </Box>
-          </Box>
-
-          {/* Host Groups */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>
-                *
-              </Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>
-                Host groups
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
-              <TextField
-                {...textFieldProps}
-                value={hostgroup}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  sethostgroup(e.target.value)
-                }
-              />
-              <Button variant="contained" size="small" sx={{ fontSize: 14 }}>
-                Select
-              </Button>
-            </Box>
-          </Box>
-
-          {/* Interfaces */}
-          <Box sx={{ mt: 2 }}>
-            <Box sx={{ display: "flex", gap: 4, mb: 1, px: 2 }}>
-              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
-                Type
-              </Typography>
-              <Typography {...typographyProps}>IP address</Typography>
-              <Typography {...typographyProps}>DNS name</Typography>
-              <Typography {...typographyProps}>Connect to</Typography>
-              <Typography {...typographyProps}>Port</Typography>
-              <Typography {...typographyProps}>Default</Typography>
-            </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography sx={{ minWidth: 100 }} {...typographyProps}>
-                SNMP
-              </Typography>
-              <TextField
-                {...textFieldProps}
-                value={ip_address}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setip_address(e.target.value)
-                }
-                sx={{ maxWidth: 200 }}
-              />
-              <TextField {...textFieldProps} sx={{ maxWidth: 200 }} />
-              <ToggleButtonGroup
-                color="primary"
-                value={alignment}
-                exclusive
-                onChange={handleAlignmentChange}
-                size="small"
-                sx={{ "& .MuiToggleButton-root": { fontSize: 14 } }}
-              >
-                <ToggleButton value="IP">IP</ToggleButton>
-                <ToggleButton value="DNS">DNS</ToggleButton>
-              </ToggleButtonGroup>
-              <TextField
-                {...textFieldProps}
-                value={snmp_port}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setsnmp_port(e.target.value)
-                }
-                sx={{ maxWidth: 100 }}
-              />
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <RadioButtonCheckedIcon sx={{ fontSize: 14 }} />
-                <Typography {...typographyProps}>remove</Typography>
-              </Box>
-            </Box>
-          </Box>
-
-          {/* SNMP Version */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>
-                *
-              </Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>
-                SNMP version
-              </Typography>
-            </Box>
-            <FormControl sx={{ minWidth: 200 }} size="small">
-              <Select
-                value={snmp_version}
-                onChange={handleVersionChange}
-                displayEmpty
-                sx={{
-                  fontSize: 14,
-                  "& .MuiMenuItem-root": { fontSize: 14 },
-                }}
-              >
-                <MenuItem value="v1">SNMPv1</MenuItem>
-                <MenuItem value="v2">SNMPv2</MenuItem>
-                <MenuItem value="v3">SNMPv3</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", minWidth: 120 }}>
-              <Typography color="error" {...typographyProps}>
-                *
-              </Typography>
-              <Typography sx={{ ml: 1 }} {...typographyProps}>
-                SNMP community
-              </Typography>
-            </Box>
-            <TextField
-              {...textFieldProps}
-              value={snmp_community}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setsnmp_community(e.target.value)
-              }
-            />
-          </Box>
-
-          {/* Action Buttons */}
-          <Box
-            sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}
-          >
-            <Button
-              type="submit"
-              variant="outlined"
-              color="primary"
-              sx={{ fontSize: 14 }}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              sx={{ fontSize: 14 }}
-              onClick={() => {
-                sethostname("");
-                setip_address("");
-                setsnmp_port("");
-                setsnmp_version("");
-                setsnmp_community("");
-                sethostgroup("");
-                settemplates("");
+          <Box sx={{}}>
+            <Typography
+              sx={{
+                fontSize: "1.1rem",
+                color: "#a9a9a9",
+                fontWeight: "semibold",
               }}
             >
-              Cancel
-            </Button>
+              ITEMS
+            </Typography>
+            <Box sx={{ borderTop: "2px solid #d9d9d9" }} />
           </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <AddIcon
+              onClick={handleAddRow}
+              sx={{
+                color: "black",
+                cursor: "pointer",
+                border: "2px solid",
+                // borderRadius: "50%", // Optional for rounded borders
+                padding: 0.5,
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
+              }}
+            />
+          </Box>
+        </Box>
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ width: 1 }}>
+                <TableCell>Item's name</TableCell>
+                <TableCell>OID</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Unit</TableCell>
+                <TableCell>Update Interval</TableCell>
+                <TableCell>History</TableCell>
+                <TableCell>Trend</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {itemRows.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.name}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "name", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.oid}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "oid", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.type}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "type", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.unit}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "unit", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.updateInterval}
+                      onChange={(e) =>
+                        handleItemChange(
+                          row.id,
+                          "updateInterval",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.history}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "history", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      {...textFieldProps}
+                      value={row.trend}
+                      onChange={(e) =>
+                        handleItemChange(row.id, "trend", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleDeleteRow(row.id)}
+                      disabled={itemRows.length === 1}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 2,
+            mt: 2,
+          }}
+        >
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={onClose}
+            sx={{ fontSize: 14 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="outlined"
+            sx={{
+              fontSize: 14,
+              color: "black",
+              borderColor: "black",
+              "&:hover": {
+                color: "red",
+                borderColor: "red",
+              },
+            }}
+          >
+            Add
+          </Button>
         </Box>
       </Paper>
     </Box>

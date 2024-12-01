@@ -101,6 +101,7 @@ const Devices: React.FC = () => {
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 5,
+            height: "auto",
           }}
         >
           <Typography
@@ -136,15 +137,15 @@ const Devices: React.FC = () => {
           <Typography>Loading...</Typography>
         ) : (
           Object.entries(groupedDevices).map(([location, devices]) => (
-            <Box key={location} sx={{ marginBottom: 4 }}>
+            <Box key={location} sx={{ marginBottom: 0 }}>
               <Typography
                 variant="h5"
                 fontWeight={600}
-                sx={{ marginBottom: 2, textAlign: "left", color: "blue" }}
+                sx={{ marginBottom: 1, textAlign: "left", color: "blue" }}
               >
                 {location}
               </Typography>
-              <Grid container spacing={2}>
+              <Grid container columnSpacing={2}>
                 {devices.map((device) => (
                   <Grid item xs={12} sm={6} md={4} key={device._id}>
                     <Button
@@ -170,6 +171,7 @@ const Devices: React.FC = () => {
                             backgroundColor: "#f0f0f0",
                             cursor: "pointer",
                           },
+                          mb:2
                         }}
                       >
                         <Typography variant="h6" fontWeight={600} sx={{}}>
