@@ -4,12 +4,6 @@ import {
   Button,
   Typography,
   TextField,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  ToggleButton,
-  ToggleButtonGroup,
   Paper,
   IconButton,
   Table,
@@ -24,15 +18,15 @@ import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 
-interface ItemRow {
+interface TemplateItems {
   id: number;
-  name: string;
+  name_item: string;
   oid: string;
   type: string;
   unit: string;
-  updateInterval: string;
-  history: string;
-  trend: string;
+  // updateInterval: string;
+  // history: string;
+  // trend: string;
 }
 
 interface AddTemplateProps {
@@ -41,45 +35,40 @@ interface AddTemplateProps {
 
 const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
   const windowSize = useWindowSize();
-  const [alignment, setAlignment] = useState<string>("IP");
-
-  // Remove unused snmpVersion state
-  const [hostname, sethostname] = useState<string>(""); // Host name
-  const [ip_address, setip_address] = useState<string>("");
-  const [snmp_port, setsnmp_port] = useState<string>("");
-  const [snmp_version, setsnmp_version] = useState<string>("");
-  const [snmp_community, setsnmp_community] = useState<string>("");
-  const [hostgroup, sethostgroup] = useState<string>("");
-  const [templates, settemplates] = useState<string>("");
-
-  // Update handleVersionChange to use setsnmp_version
-  const handleVersionChange = (event: SelectChangeEvent) => {
-    setsnmp_version(event.target.value);
-  };
+  const [name_template, setname_template] = useState<string>("");
+  const [description, setdescription] = useState<string>("");
+  const [itemRows, setItemRows] = useState<TemplateItems[]>([
+    {
+      id: 1,
+      name_item: "",
+      oid: "",
+      type: "",
+      unit: "",
+      // updateInterval: "",
+      // history: "",
+      // trend: "",
+    },
+  ]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const success = await StoreNewhost(
-      hostname,
-      ip_address,
-      snmp_port,
-      snmp_version,
-      snmp_community,
-      hostgroup,
-      templates
-    );
+    const success = await StoreNewtemplate(name_template);
     if (success) {
       // Clear form fields after successful submission
-      sethostname("");
-      setip_address("");
-      setsnmp_port("");
-      setsnmp_version("");
-      setsnmp_community("");
-      sethostgroup("");
-      settemplates("");
-      alert("Device added successfully!");
+      setname_template("");
+      setdescription("");
+      setItemRows([
+        {
+          id: 1,
+          name_item: "",
+          oid: "",
+          type: "",
+          unit: "",
+        },
+      ]);
+      alert("Template added successfully!");
     } else {
-      alert("Failed to add device. Please try again.");
+      alert("Failed to add template. Please try again.");
     }
   };
 
@@ -98,55 +87,76 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
     fontSize: 14,
   };
 
-  const StoreNewhost = async (
-    hostname: string,
-    ip_address: string,
-    snmp_port: string,
-    snmp_version: string,
-    snmp_community: string,
-    hostgroup: string,
-    templates: string
-  ): Promise<boolean> => {
+  const StoreNewtemplate = async (name_template: string): Promise<boolean> => {
     try {
-      await axios.post("http://127.0.0.1:3000/host/createHost", {
-        hostname,
-        ip_address,
-        snmp_port,
-        snmp_version,
-        snmp_community,
-        hostgroup,
-        templates,
-      });
-      return true;
+      if (!name_template.trim()) {
+        alert("Template name is required");
+        return false;
+      }
+
+      // Create request body with just the template name
+      const requestBody: any = {
+        name_template,
+        description,
+      };
+
+      // Only add items array if there are non-empty items
+      const filledItems = itemRows.filter(
+        (item) =>
+          item.name_item.trim() ||
+          item.oid.trim() ||
+          item.type.trim() ||
+          item.unit.trim()
+      );
+
+      if (filledItems.length > 0) {
+        requestBody.items = filledItems.map((item) => ({
+          name_item: item.name_item,
+          oid: item.oid,
+          type: item.type,
+          unit: item.unit,
+        }));
+      }
+
+      const response = await axios.post(
+        "http://127.0.0.1:3000/template",
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        return true;
+      }
+      return false;
     } catch (error) {
-      console.error("Error recording New Host:", error);
+      console.error("Error storing template:", error);
+      if (axios.isAxiosError(error)) {
+        alert(
+          `Failed to store template: ${
+            error.response?.data?.message || error.message
+          }`
+        );
+      } else {
+        alert("An unexpected error occurred while storing the template");
+      }
       return false;
     }
   };
 
-  const [itemRows, setItemRows] = useState<ItemRow[]>([
-    {
-      id: 1,
-      name: "",
-      oid: "",
-      type: "",
-      unit: "",
-      updateInterval: "",
-      history: "",
-      trend: "",
-    },
-  ]);
-
   const handleAddRow = () => {
-    const newRow: ItemRow = {
+    const newRow: TemplateItems = {
       id: itemRows.length + 1,
-      name: "",
+      name_item: "",
       oid: "",
       type: "",
       unit: "",
-      updateInterval: "",
-      history: "",
-      trend: "",
+      // updateInterval: "",
+      // history: "",
+      // trend: "",
     };
     setItemRows([...itemRows, newRow]);
   };
@@ -159,7 +169,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
 
   const handleItemChange = (
     id: number,
-    field: keyof ItemRow,
+    field: keyof TemplateItems,
     value: string
   ) => {
     setItemRows(
@@ -205,9 +215,26 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
             </Box>
             <TextField
               {...textFieldProps}
-              value={hostname}
+              value={name_template}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                sethostname(e.target.value)
+                setname_template(e.target.value)
+              }
+            />
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 150 }}>
+              <Typography color="error" {...typographyProps}>
+                *
+              </Typography>
+              <Typography sx={{ ml: 1 }} {...typographyProps}>
+                Description
+              </Typography>
+            </Box>
+            <TextField
+              {...textFieldProps}
+              value={description}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setdescription(e.target.value)
               }
             />
           </Box>
@@ -239,135 +266,116 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
               }}
             />
           </Box>
-        </Box>
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ width: 1 }}>
-                <TableCell>Item's name</TableCell>
-                <TableCell>OID</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Unit</TableCell>
-                <TableCell>Update Interval</TableCell>
-                <TableCell>History</TableCell>
-                <TableCell>Trend</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {itemRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.name}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "name", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.oid}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "oid", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.type}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "type", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.unit}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "unit", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.updateInterval}
-                      onChange={(e) =>
-                        handleItemChange(
-                          row.id,
-                          "updateInterval",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.history}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "history", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      {...textFieldProps}
-                      value={row.trend}
-                      onChange={(e) =>
-                        handleItemChange(row.id, "trend", e.target.value)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleDeleteRow(row.id)}
-                      disabled={itemRows.length === 1}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
+
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ width: 1 }}>
+                  <TableCell>Item's name</TableCell>
+                  <TableCell>OID</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Unit</TableCell>
+                  <TableCell>Update Interval</TableCell>
+                  <TableCell>History</TableCell>
+                  <TableCell>Trend</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: 2,
-            mt: 2,
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={onClose}
-            sx={{ fontSize: 14 }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="outlined"
+              </TableHead>
+              <TableBody>
+                {itemRows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>
+                      <TextField
+                        {...textFieldProps}
+                        value={row.name_item}
+                        onChange={(e) =>
+                          handleItemChange(row.id, "name_item", e.target.value)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        {...textFieldProps}
+                        value={row.oid}
+                        onChange={(e) =>
+                          handleItemChange(row.id, "oid", e.target.value)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        {...textFieldProps}
+                        value={row.type}
+                        onChange={(e) =>
+                          handleItemChange(row.id, "type", e.target.value)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        {...textFieldProps}
+                        value={row.unit}
+                        onChange={(e) =>
+                          handleItemChange(row.id, "unit", e.target.value)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField {...textFieldProps} />
+                    </TableCell>
+                    <TableCell>
+                      <TextField {...textFieldProps} />
+                    </TableCell>
+                    <TableCell>
+                      <TextField {...textFieldProps} />
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={() => handleDeleteRow(row.id)}
+                        disabled={itemRows.length === 1}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Button section */}
+          <Box
             sx={{
-              fontSize: 14,
-              color: "black",
-              borderColor: "black",
-              "&:hover": {
-                color: "red",
-                borderColor: "red",
-              },
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 2,
+              mt: 2,
             }}
           >
-            Add
-          </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={onClose}
+              sx={{ fontSize: 14 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="outlined"
+              sx={{
+                fontSize: 14,
+                color: "black",
+                borderColor: "black",
+                "&:hover": {
+                  color: "red",
+                  borderColor: "red",
+                },
+              }}
+            >
+              Add
+            </Button>
+          </Box>
         </Box>
       </Paper>
     </Box>

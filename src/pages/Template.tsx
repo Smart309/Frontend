@@ -73,7 +73,7 @@ const Templates: React.FC = () => {
               fontSize: "1rem",
               fontWeight: 600,
               borderRadius: "70px",
-              width: "8rem",
+              width: "9rem",
               height: "2.5rem",
               "&:hover": {
                 backgroundColor: "#F37E58",
