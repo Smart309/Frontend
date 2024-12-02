@@ -186,8 +186,8 @@ const Login = () => {
                 }}
                 label="Password"
                 color="secondary"
-                focused
                 type="password"
+                focused
               />
 
               <Button
