@@ -70,6 +70,7 @@ interface DeviceItems {
   oid: string;
   type: string;
   unit: string;
+  interval: number;
   // updateInterval: string;
   // history: string;
   // trend: string;
@@ -95,7 +96,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      // updateInterval: "",
+      interval: 60,
       // history: "",
       // trend: "",
     },
@@ -108,7 +109,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      // updateInterval: "",
+      interval: 60,
       // history: "",
       // trend: "",
     };
@@ -241,6 +242,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           oid: "",
           type: "",
           unit: "",
+          interval: 60,
         },
       ]);
       alert("Device added successfully!");
@@ -710,7 +712,17 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                           />
                         </TableCell>
                         <TableCell>
-                          <TextField {...textFieldProps} />
+                          <TextField
+                            {...textFieldProps}
+                            value={row.interval}
+                            onChange={(e) =>
+                              handleItemChange(
+                                row.id,
+                                "interval",
+                                e.target.value
+                              )
+                            }
+                          />
                         </TableCell>
                         <TableCell>
                           <TextField {...textFieldProps} />
