@@ -1,5 +1,5 @@
 // AddDevice.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -61,7 +61,7 @@ interface AddDeviceProps {
 
 interface DeviceDetails {
   location: string;
-  room: string;
+  description: string;
 }
 
 interface DeviceItems {
@@ -71,11 +71,25 @@ interface DeviceItems {
   type: string;
   unit: string;
   interval: number;
-  // updateInterval: string;
   // history: string;
   // trend: string;
 }
 
+interface TemplateItem {
+  name_item: string;
+  type: string;
+  unit: string;
+  _id: string;
+  oid?: string;
+  interval: number;
+}
+
+interface Template {
+  _id: string;
+  name_template: string;
+  items: TemplateItem[];
+  description: string;
+}
 const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const windowSize = useWindowSize();
   const [hostname, sethostname] = useState<string>("");
@@ -86,8 +100,67 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const [hostgroup, sethostgroup] = useState<string>("");
   const [templates, settemplates] = useState<string>("");
   const [details_location, setdetails_location] = useState<string>("");
-  const [details_room, setdetails_room] = useState<string>("");
+  const [details_description, setdetails_description] = useState<string>("");
   const [tabvalue, setTabvalue] = React.useState("host"); //Tabview
+
+  const [templateOptions, setTemplateOptions] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Function to handle template selection
+  const handleTemplateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedTemplateId = e.target.value;
+    settemplates(selectedTemplateId);
+
+    // Find the selected template
+    const selectedTemplate = templateOptions.find(
+      (temp) => temp._id === selectedTemplateId
+    );
+
+    if (selectedTemplate && selectedTemplate.items.length > 0) {
+      // Convert template items to the DeviceItems format
+      const newItems = selectedTemplate.items.map((item, index) => ({
+        id: index + 1,
+        name_item: item.name_item,
+        oid: item.oid || "",
+        type: item.type,
+        unit: item.unit,
+        interval: item.interval,
+      }));
+
+      setItemRows(newItems);
+      // Optionally switch to items tab
+      setTabvalue("item");
+    } else {
+      // Reset to default single empty row if no items
+      setItemRows([
+        {
+          id: 1,
+          name_item: "",
+          oid: "",
+          type: "",
+          unit: "",
+          interval: 0,
+        },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("http://127.0.0.1:3000/template");
+        setTemplateOptions(response.data.data);
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+        setTemplateOptions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
 
   const [itemRows, setItemRows] = useState<DeviceItems[]>([
     {
@@ -96,7 +169,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      interval: 60,
+      interval: 0,
       // history: "",
       // trend: "",
     },
@@ -109,7 +182,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      interval: 60,
+      interval: 0,
       // history: "",
       // trend: "",
     };
@@ -134,43 +207,12 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
   const details = {
     location: details_location,
-    room: details_room,
+    description: details_description,
   };
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     setsnmp_version(event.target.value);
   };
-
-  // for all fields require
-  // const StoreNewhost = async (
-  //   hostname: string,
-  //   ip_address: string,
-  //   snmp_port: string,
-  //   snmp_version: string,
-  //   snmp_community: string,
-  //   hostgroup: string,
-  //   templates: string,
-  //   details: DeviceDetails,
-  //   items: DeviceItems[]
-  // ): Promise<boolean> => {
-  //   try {
-  //     await axios.post("http://127.0.0.1:3000/host", {
-  //       hostname,
-  //       ip_address,
-  //       snmp_port,
-  //       snmp_version,
-  //       snmp_community,
-  //       hostgroup,
-  //       templates,
-  //       details,
-  //       items,
-  //     });
-  //     return true;
-  //   } catch (error) {
-  //     console.error("Error recording New Host:", error);
-  //     return false;
-  //   }
-  // };
 
   const StoreNewhost = async (
     hostname: string,
@@ -234,7 +276,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       sethostgroup("");
       settemplates("");
       setdetails_location("");
-      setdetails_room("");
+      setdetails_description("");
       setItemRows([
         {
           id: 1,
@@ -242,7 +284,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           oid: "",
           type: "",
           unit: "",
-          interval: 60,
+          interval: 0,
         },
       ]);
       alert("Device added successfully!");
@@ -376,8 +418,10 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                   />
                   <TextField
                     {...textFieldProps}
+                    select
                     value={templates}
-                    onChange={(e) => settemplates(e.target.value)}
+                    onChange={handleTemplateChange}
+                    disabled={loading}
                     sx={{
                       mb: 2,
                       width: 1,
@@ -385,7 +429,16 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                         fontSize: 14,
                       },
                     }}
-                  />
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {templateOptions.map((template) => (
+                      <MenuItem key={template._id} value={template._id}>
+                        {template.name_template}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                   <TextField
                     {...textFieldProps}
                     value={hostgroup}
@@ -407,7 +460,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                     gap: 2.5,
                   }}
                 >
-                  <Button
+                  {/* <Button
                     variant="contained"
                     size="small"
                     sx={{ fontSize: 14, mt: 6.6 }}
@@ -420,7 +473,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                     sx={{ fontSize: 14 }}
                   >
                     Select
-                  </Button>
+                  </Button> */}
                 </Box>
               </Box>
 
@@ -543,7 +596,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                   </Box>
 
                   <Box sx={{ display: "flex", justifyContent: "right", mt: 4 }}>
-                    <Typography sx={{ fontSize: 14 }}>Room</Typography>
+                    <Typography sx={{ fontSize: 14 }}>description</Typography>
                   </Box>
                 </Box>
                 <Box sx={{ textAlign: "left" }}>
@@ -553,18 +606,20 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                     onChange={(e) => setdetails_location(e.target.value)}
                     sx={{
                       mb: 2,
-                      width: "90%",
+                      width: "100%",
                       "& .MuiInputBase-input": {
                         fontSize: 14,
                       },
                     }}
                   />
                   <TextField
+                    multiline
+                    rows={4}
                     {...textFieldProps}
-                    value={details_room}
-                    onChange={(e) => setdetails_room(e.target.value)}
+                    value={details_description}
+                    onChange={(e) => setdetails_description(e.target.value)}
                     sx={{
-                      width: "90%",
+                      width: "100%",
                       "& .MuiInputBase-input": {
                         fontSize: 14,
                       },
