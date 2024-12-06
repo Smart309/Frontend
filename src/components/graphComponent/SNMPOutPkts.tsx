@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper, Container } from "@mui/material";
+import { Box, Typography, Paper } from "@mui/material";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,6 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -57,14 +56,17 @@ interface ApiResponse {
   data: Host[];
 }
 
-const SNMPInpktsGraphs = () => {
+interface SNMPInPktsProps {
+  hostId: string;
+}
+
+const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
   const [error, setError] = useState<string | null>(null);
 
-  // Define fixed time labels from 00:00 to 22:00
   const timeLabels = [
     "00:00",
     "02:00",
@@ -83,6 +85,10 @@ const SNMPInpktsGraphs = () => {
   const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: "index",
+      intersect: false,
+    },
     plugins: {
       legend: {
         position: "top" as const,
@@ -93,6 +99,23 @@ const SNMPInpktsGraphs = () => {
         font: {
           size: 16,
           weight: "bold",
+        },
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        titleFont: {
+          size: 12,
+        },
+        bodyFont: {
+          size: 12,
+        },
+        padding: 10,
+        displayColors: true,
+        callbacks: {
+          label: function (context) {
+            return `Packets: ${context.parsed.y}`;
+          },
         },
       },
     },
@@ -118,47 +141,43 @@ const SNMPInpktsGraphs = () => {
         },
       },
     },
+    hover: {
+      mode: "nearest",
+      intersect: true,
+    },
   };
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!hostId) return;
+
       try {
-        const response = await fetch("http://127.0.0.1:3000/data");
+        const response = await fetch(`http://127.0.0.1:3000/data/${hostId}`);
         const result: ApiResponse = await response.json();
 
         if (result.status === "success") {
           const host = result.data[0];
           const inPktsItem = host.items.find(
-            (item) => item.item_id._id === "snmpInPkts"
+            (item) => item.item_id.name_item === "snmpInPkts"
           );
 
           if (inPktsItem) {
-            // Initialize data array with zeros for all time slots
+            // Initialize array with zeros for each time slot
             const dataValues = new Array(timeLabels.length).fill(0);
 
-            // Process the actual data
             inPktsItem.data.forEach((entry) => {
-              const entryTime = new Date(entry.timestamp).toLocaleTimeString(
-                [],
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                }
-              );
-
+              const entryTime = new Date(entry.timestamp);
+              const hours = entryTime.getHours();
+              
               // Find the appropriate time slot
               const timeSlot = timeLabels.findIndex((label, index) => {
-                const currentHour = parseInt(entryTime.split(":")[0]);
-                const nextLabel = timeLabels[index + 1];
                 const currentLabelHour = parseInt(label.split(":")[0]);
-                const nextLabelHour = nextLabel
+                const nextLabel = timeLabels[index + 1];
+                const nextLabelHour = nextLabel 
                   ? parseInt(nextLabel.split(":")[0])
                   : 24;
-
-                return (
-                  currentHour >= currentLabelHour && currentHour < nextLabelHour
-                );
+                
+                return hours >= currentLabelHour && hours < nextLabelHour;
               });
 
               if (timeSlot !== -1) {
@@ -175,7 +194,13 @@ const SNMPInpktsGraphs = () => {
                   borderColor: "rgb(75, 192, 192)",
                   backgroundColor: "rgba(75, 192, 192, 0.5)",
                   tension: 0.1,
-                  pointRadius: 0,
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                  pointBackgroundColor: "white",
+                  pointBorderColor: "rgb(75, 192, 192)",
+                  pointBorderWidth: 2,
+                  pointHoverBackgroundColor: "rgb(75, 192, 192)",
+                  pointHoverBorderColor: "white",
                   fill: false,
                 },
               ],
@@ -189,37 +214,28 @@ const SNMPInpktsGraphs = () => {
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 1000000);
-
-    return () => clearInterval(interval);
-  }, []);
+    if (hostId) {
+      fetchData();
+      const interval = setInterval(fetchData, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [hostId]);
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ color: "primary.main" }}
-        >
-          SNMP Monitoring
-        </Typography>
-        <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
-          {error ? (
-            <Typography color="error" sx={{ p: 2 }}>
-              {error}
-            </Typography>
-          ) : (
-            <Box sx={{ height: "100%", position: "relative" }}>
-              <Line options={options} data={chartData} />
-            </Box>
-          )}
-        </Paper>
-      </Box>
-    </Container>
+    <Box sx={{ mt: 4, mb: 4 }}>
+      <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
+        {error ? (
+          <Typography color="error" sx={{ p: 2 }}>
+            {error}
+          </Typography>
+        ) : (
+          <Box sx={{ height: "100%", position: "relative" }}>
+            <Line options={options} data={chartData} />
+          </Box>
+        )}
+      </Paper>
+    </Box>
   );
 };
 
-export default SNMPInpktsGraphs;
+export default SNMPInPkts;
