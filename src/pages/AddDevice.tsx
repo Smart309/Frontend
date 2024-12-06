@@ -70,7 +70,7 @@ interface DeviceItems {
   oid: string;
   type: string;
   unit: string;
-  interval: string;
+  interval: number;
   // updateInterval: string;
   // history: string;
   // trend: string;
@@ -96,7 +96,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      interval: "",
+      interval: 60,
       // history: "",
       // trend: "",
     },
@@ -109,7 +109,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       oid: "",
       type: "",
       unit: "",
-      interval: "",
+      interval: 60,
       // history: "",
       // trend: "",
     };
@@ -242,7 +242,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
           oid: "",
           type: "",
           unit: "",
-          interval: "",
+          interval: 60,
         },
       ]);
       alert("Device added successfully!");
