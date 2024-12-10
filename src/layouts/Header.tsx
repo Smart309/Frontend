@@ -1,9 +1,10 @@
-import React from "react";
-import { Box, Stack} from "@mui/material";
-import { IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import React, { useState } from "react";
+import { Box, Stack, IconButton } from "@mui/material";
 import useWindowSize from "../hooks/useWindowSize";
-import Logo from "../assets/Logo.svg";
+import SirenLogo from "../../public/SirenLogo.svg"; 
+import CPESirenLogo from "../../public/CPESiren.svg"; 
+import MenuOpenImage from "../../public/menuOpen.png";
+import MenuCloseImage from "../../public/menuClose.png";
 
 interface HeaderProps {
   isHideSidebar: boolean;
@@ -14,17 +15,25 @@ const Header: React.FC<HeaderProps> = ({
   isHideSidebar,
   handleHideSidebar,
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(true); 
   const windowSize = useWindowSize();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen); 
+    handleHideSidebar(windowSize.width);
+  };
+
   return (
     <>
       <Stack
         direction="row"
-        spacing={5}
+        spacing={4}
         sx={{
           mb: "30px",
           marginLeft: 1,
         }}
       >
+       
         {!isHideSidebar && windowSize.width >= 1100 && (
           <Box
             sx={{
@@ -33,20 +42,35 @@ const Header: React.FC<HeaderProps> = ({
               marginBottom: "15px",
             }}
           >
+            {/* SirenLogo */}
             <img
-              src={Logo}
-              alt="Mycos"
+              src={SirenLogo}
+              alt="Siren Logo"
               style={{
-                width: 110,
-                marginLeft: -12,
+                width: 40,
                 height: "auto",
-                marginRight: 15,
+                marginRight: isMenuOpen ? -18 : 0,
+                marginTop: -20,
               }}
             />
+            
+            {isMenuOpen && (
+              <img
+                src={CPESirenLogo}
+                alt="CPE Siren Logo"
+                style={{
+                  width: 100,
+                  height: "auto",
+                  marginTop: -1,
+                  marginRight: 30,
+                }}
+              />
+            )}
           </Box>
         )}
+
         <IconButton
-          onClick={() => handleHideSidebar(windowSize.width)}
+          onClick={toggleMenu} 
           sx={{
             "&:focus": {
               outline: "none",
@@ -55,13 +79,19 @@ const Header: React.FC<HeaderProps> = ({
             "&:hover": {
               color: "#242D5D",
             },
-            width: 55,
-            height: 55,
+            width: 50,
+            height: 50,
+            padding: 0,
           }}
         >
-          <MenuIcon
+          <Box
+            component="img"
+            src={isMenuOpen ? MenuOpenImage : MenuCloseImage} 
+            alt="Menu Toggle"
             sx={{
-              fontSize: 25,
+              width: "55%",
+              height: "55%",
+              objectFit: "contain",
             }}
           />
         </IconButton>
@@ -69,4 +99,5 @@ const Header: React.FC<HeaderProps> = ({
     </>
   );
 };
+
 export default Header;

@@ -26,7 +26,7 @@ const DrawerSidebarList = ({ onClick }: DrawerSidebarListProps) => {
       {SlideBarItems.map((slide) => (
         <ListItem key={slide.id}>
           <ListItemButton
-            onClick={() => handleClick(slide.path)}
+            // onClick={() => handleClick(slide.path)}
             selected={location.pathname === slide.path}
           >
             <ListItemIcon>{slide.icon}</ListItemIcon>

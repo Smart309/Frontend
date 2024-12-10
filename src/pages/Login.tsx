@@ -30,13 +30,13 @@ const Login = () => {
       {/* CMU Siren Logo */}
       <Box
         component="img"
-        src="../../public/CMUSirenLogo.svg" 
+        src="../../public/NewLogo.svg" 
         alt="CMU Siren Logo"
         sx={{
           position: "absolute",
-          top: "10px",
-          right: "10px", 
-          width: "14vh", 
+          top: "5px",
+          right: "5px", 
+          width: "20vh", 
           height: "auto",
         }}
       />

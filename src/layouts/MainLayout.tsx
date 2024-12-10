@@ -50,7 +50,6 @@ export default function MainLayout() {
             maxWidth: 250,
             minHeight: 400,
             backgroundColor: "#FFFFFB",
-
             alignContent: "center",
             p: "20px 10px 10px 10px",
           }}

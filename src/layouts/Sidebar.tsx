@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Typography, Box, Stack } from "@mui/material";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
@@ -12,6 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useLocation } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
+import DevicesIcon from '@mui/icons-material/Devices';  // Import DevicesIcon
 
 interface SidebarProps {
   isHideSidebar: boolean;
@@ -34,7 +35,7 @@ export const SlideBarItems = [
     subItems: [
       {
         id: "sub-1",
-        icon: <DnsIcon sx={{ fontSize: 20 }} />,
+        icon: <DevicesIcon sx={{ fontSize: 20 }} />,  // Use DevicesIcon here
         name: "Devices",
         path: "/devices",
         newIcon: "",
@@ -96,15 +97,12 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const handleItemClick = (item: any) => {
     if (item.subItems) {
       if (expandedItem === item.id) {
-        // If clicking on already expanded item, collapse it
         setExpandedItem(null);
       } else {
-        // Expand the clicked item and navigate to first sub-item
         setExpandedItem(item.id);
         navigate(item.subItems[0].path);
       }
     } else {
-      // For non-expandable items, just navigate and collapse any expanded item
       setExpandedItem(null);
       navigate(item.path);
     }
@@ -139,8 +137,23 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               transition: "background-color 0.3s ease",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
               {item.icon}
+              {/* Render the orange dot for active subitems */}
+              {item.subItems && item.subItems.some(sub => location.pathname.includes(sub.path)) && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%", // Center vertically
+                    left: "50%", // Center horizontally
+                    transform: "translate(-50%, -50%)", // Offset the dot so it's centered on the icon
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    backgroundColor: "#FF5722", // Orange color
+                  }}
+                />
+              )}
               <Box
                 sx={{
                   overflow: "hidden",
@@ -177,7 +190,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
           </Box>
 
           {/* Sub-items */}
-          {item.subItems && expandedItem === item.id && (
+          {item.subItems && expandedItem === item.id && !isHideSidebar && windowSize.width >= 1100 && (
             <div>
               {item.subItems.map((subItem) => (
                 <Box
@@ -188,27 +201,40 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    borderRadius: "100px",
-                    p: "5px 10px",
+                    borderRadius: "5px",
+                    p: "5px 30px",
                     ml: "50px",
                     backgroundColor:
                       location.pathname === subItem.path
-                        ? "#f57f58"
-                        : "transparent",
-                    color:
-                      location.pathname === subItem.path
                         ? "#FFFFFB"
-                        : "#242D5D",
+                        : "transparent",
+
                     "&:hover": {
                       backgroundColor:
                         location.pathname !== subItem.path
                           ? "#FFEAE3"
-                          : "#F25A28",
+                          : "#FFEAE3",
                     },
                     transition: "background-color 0.3s ease",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
+                    {subItem.icon}
+                    {/* Render the orange dot for active subitems */}
+                    {location.pathname === subItem.path && (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "-12%", 
+                          transform: "translate(-50%, -50%)", // Offset the dot so it's centered on the icon
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          backgroundColor: "#FF5722", // Orange color
+                        }}
+                      />
+                    )}
                     <Box
                       sx={{
                         overflow: "hidden",
