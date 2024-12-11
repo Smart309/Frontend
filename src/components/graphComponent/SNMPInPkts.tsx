@@ -74,11 +74,12 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
     datasets: [],
   });
   const [error, setError] = useState<string | null>(null);
+  const [hasData, setHasData] = useState<boolean>(false);
 
   const getCurrentDateAtTime = (hours: number, minutes: number = 0) => {
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
-    return date.getTime(); // Return timestamp instead of Date object
+    return date.getTime();
   };
 
   const options: ChartOptions<"line"> = {
@@ -148,8 +149,8 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
           display: true,
           text: "Time",
         },
-        min: getCurrentDateAtTime(0), // Now returns timestamp
-        max: getCurrentDateAtTime(22), // Now returns timestamp
+        min: getCurrentDateAtTime(0),
+        max: getCurrentDateAtTime(22),
         ticks: {
           source: "auto",
           autoSkip: false,
@@ -180,7 +181,7 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
             (item) => item.item_id.name_item === "snmpInPkts"
           );
 
-          if (inPktsItem) {
+          if (inPktsItem && inPktsItem.data.length > 0) {
             const sortedData = inPktsItem.data.sort(
               (a, b) =>
                 new Date(a.timestamp).getTime() -
@@ -201,8 +202,8 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
                   borderColor: "rgb(75, 192, 192)",
                   backgroundColor: "rgba(75, 192, 192, 0.5)",
                   tension: 0.1,
-                  borderWidth: 4, //line weight
-                  pointRadius: 1, //plot weight
+                  borderWidth: 4,
+                  pointRadius: 1,
                   pointHoverRadius: 4,
                   pointBackgroundColor: "white",
                   pointBorderColor: "rgb(75, 192, 192)",
@@ -214,12 +215,19 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
                 },
               ],
             });
+            setHasData(true);
+            setError(null);
+          } else {
+            setError("No data available");
+            setHasData(false);
           }
         } else {
           setError("Failed to fetch data");
+          setHasData(false);
         }
       } catch (err) {
         setError("Error connecting to server");
+        setHasData(false);
       }
     };
 
@@ -230,18 +238,24 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
     }
   }, [hostId]);
 
+  if (!hasData) {
+    return (
+      <Box sx={{ mt: 4, mb: 4 }}>
+        {/* <Paper elevation={3} sx={{ p: 3, display: "flex", justifyContent: "center", alignItems: "center", height: "100px" }}>
+          <Typography color="error" sx={{ p: 2 }}>
+            {error || "No data available"}
+          </Typography>
+        </Paper> */}
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
-        {error ? (
-          <Typography color="error" sx={{ p: 2 }}>
-            {error}
-          </Typography>
-        ) : (
-          <Box sx={{ height: "100%", position: "relative" }}>
-            <Line options={options} data={chartData} />
-          </Box>
-        )}
+        <Box sx={{ height: "100%", position: "relative" }}>
+          <Line options={options} data={chartData} />
+        </Box>
       </Paper>
     </Box>
   );

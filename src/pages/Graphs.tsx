@@ -65,9 +65,9 @@ const Graphs = () => {
               },
             }}
           >
-            <MenuItem value="">
+            {/* <MenuItem value="">
               <em>Select Device</em>
-            </MenuItem>
+            </MenuItem> */}
             {hosts.map((host) => (
               <MenuItem key={host._id} value={host._id}>
                 {host.hostname}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper } from "@mui/material";
 import {
   Chart as ChartJS,
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -11,11 +11,14 @@ import {
   Legend,
   ChartData,
   ChartOptions,
+  Point,
 } from "chart.js";
+import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
+import { enUS } from "date-fns/locale";
 
 ChartJS.register(
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -56,16 +59,28 @@ interface ApiResponse {
   data: Host[];
 }
 
-interface SNMPInPktsProps {
+interface SNMPOutPktsProps {
   hostId: string;
 }
 
-const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
+interface TimePoint extends Point {
+  x: number;
+  y: number;
+}
+
+const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
   const [error, setError] = useState<string | null>(null);
+  const [hasData, setHasData] = useState<boolean>(false);
+
+  const getCurrentDateAtTime = (hours: number, minutes: number = 0) => {
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date.getTime();
+  };
 
   const options: ChartOptions<"line"> = {
     responsive: true,
@@ -113,6 +128,20 @@ const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
         },
       },
       x: {
+        type: "time",
+        adapters: {
+          date: {
+            locale: enUS,
+          },
+        },
+        time: {
+          unit: "hour",
+          parser: "yyyy-MM-dd HH:mm:ss",
+          displayFormats: {
+            hour: "HH:mm",
+          },
+          tooltipFormat: "HH:mm:ss",
+        },
         grid: {
           display: true,
         },
@@ -120,16 +149,21 @@ const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
           display: true,
           text: "Time",
         },
+        min: getCurrentDateAtTime(0),
+        max: getCurrentDateAtTime(22),
         ticks: {
-          maxRotation: 45,
-          autoSkip: true,
-          maxTicksLimit: 12,
+          source: "auto",
+          autoSkip: false,
+          callback: function (value) {
+            const date = new Date(value);
+            const hours = date.getHours();
+            return hours % 2 === 0
+              ? `${hours.toString().padStart(2, "0")}:00`
+              : "";
+          },
+          maxRotation: 0,
         },
       },
-    },
-    hover: {
-      mode: "nearest",
-      intersect: true,
     },
   };
 
@@ -147,24 +181,17 @@ const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
             (item) => item.item_id.name_item === "snmpOutPkts"
           );
 
-          if (outPktsItem) {
-            // Sort data by timestamp
-            const sortedData = [...outPktsItem.data].sort(
-              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          if (outPktsItem && outPktsItem.data.length > 0) {
+            const sortedData = outPktsItem.data.sort(
+              (a, b) =>
+                new Date(a.timestamp).getTime() -
+                new Date(b.timestamp).getTime()
             );
 
-            // Format timestamps for display
-            const labels = sortedData.map(entry => {
-              const date = new Date(entry.timestamp);
-              return date.toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-              });
-            });
-
-            // Get the values
-            const values = sortedData.map(entry => Number(entry.value));
+            const labels = sortedData.map((entry) =>
+              new Date(entry.timestamp).getTime()
+            );
+            const values = sortedData.map((entry) => Number(entry.value));
 
             setChartData({
               labels,
@@ -172,26 +199,35 @@ const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
                 {
                   label: "Outcoming Packets",
                   data: values,
-                  borderColor: "rgb(25, 118, 210)", // MUI primary blue
-                  backgroundColor: "rgba(25, 118, 210, 0.5)",
+                  borderColor: "blue",
+                  backgroundColor: "#87CEEB",
                   tension: 0.1,
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
+                  borderWidth: 4,
+                  pointRadius: 1,
+                  pointHoverRadius: 4,
                   pointBackgroundColor: "white",
-                  pointBorderColor: "rgb(25, 118, 210)",
+                  pointBorderColor: "blue",
                   pointBorderWidth: 2,
-                  pointHoverBackgroundColor: "rgb(25, 118, 210)",
+                  pointHoverBackgroundColor: "#87CEEB",
                   pointHoverBorderColor: "white",
                   fill: false,
+                  showLine: true,
                 },
               ],
             });
+            setHasData(true);
+            setError(null);
+          } else {
+            setError("No data available");
+            setHasData(false);
           }
         } else {
           setError("Failed to fetch data");
+          setHasData(false);
         }
       } catch (err) {
         setError("Error connecting to server");
+        setHasData(false);
       }
     };
 
@@ -202,25 +238,24 @@ const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
     }
   }, [hostId]);
 
+  if (!hasData) {
+    return (
+      <Box sx={{ mt: 4, mb: 4 }}>
+        {/* <Paper elevation={3} sx={{ p: 3, display: "flex", justifyContent: "center", alignItems: "center", height: "100px" }}>
+          <Typography color="error" sx={{ p: 2 }}>
+            {error || "No data available"}
+          </Typography>
+        </Paper> */}
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          p: 3, 
-          height: "500px",
-          backgroundColor: "background.paper" 
-        }}
-      >
-        {error ? (
-          <Typography color="error" sx={{ p: 2 }}>
-            {error}
-          </Typography>
-        ) : (
-          <Box sx={{ height: "100%", position: "relative" }}>
-            <Line options={options} data={chartData} />
-          </Box>
-        )}
+      <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
+        <Box sx={{ height: "100%", position: "relative" }}>
+          <Line options={options} data={chartData} />
+        </Box>
       </Paper>
     </Box>
   );
