@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  Select,
+  MenuItem,
+  Typography,
+  Paper,
+} from "@mui/material";
 import {
   Chart as ChartJS,
   TimeScale,
@@ -11,7 +18,6 @@ import {
   Legend,
   ChartData,
   ChartOptions,
-  Point,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
@@ -63,11 +69,6 @@ interface SNMPOutPktsProps {
   hostId: string;
 }
 
-interface TimePoint extends Point {
-  x: number;
-  y: number;
-}
-
 const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
@@ -75,11 +76,59 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
   });
   const [error, setError] = useState<string | null>(null);
   const [hasData, setHasData] = useState<boolean>(false);
+  const [timeRange, setTimeRange] = useState<string>("2hr"); // Default to 2 hours
 
-  const getCurrentDateAtTime = (hours: number, minutes: number = 0) => {
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date.getTime();
+  const getTimeRangeSettings = (range: string) => {
+    const now = new Date();
+    const endTime = now.getTime();
+    let startTime: number;
+    let unit: "minute" | "hour" | "day" | "month" | "year";
+
+    switch (range) {
+      case "10min":
+        startTime = endTime - 10 * 60 * 1000;
+        unit = "minute";
+        break;
+      case "30min":
+        startTime = endTime - 30 * 60 * 1000;
+        unit = "minute";
+        break;
+      case "1hr":
+        startTime = endTime - 60 * 60 * 1000;
+        unit = "minute";
+        break;
+      case "6hr":
+        startTime = endTime - 6 * 60 * 60 * 1000;
+        unit = "hour";
+        break;
+      case "12hr":
+        startTime = endTime - 12 * 60 * 60 * 1000;
+        unit = "hour";
+        break;
+      case "24hr":
+        startTime = endTime - 24 * 60 * 60 * 1000;
+        unit = "hour";
+        break;
+      // case "7d":
+      //   startTime = endTime - 7 * 24 * 60 * 60 * 1000;
+      //   unit = "day";
+      //   break;
+      // case "15d":
+      //   startTime = endTime - 15 * 24 * 60 * 60 * 1000;
+      //   unit = "day";
+      //   break;
+      // case "1mon":
+      //   startTime = endTime - 30 * 24 * 60 * 60 * 1000;
+      //   unit = "month";
+      //   break;
+      case "2hr":
+      default:
+        startTime = endTime - 2 * 60 * 60 * 1000;
+        unit = "hour";
+        break;
+    }
+
+    return { startTime, endTime, unit };
   };
 
   const options: ChartOptions<"line"> = {
@@ -135,9 +184,10 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
           },
         },
         time: {
-          unit: "hour",
+          unit: getTimeRangeSettings(timeRange).unit,
           parser: "yyyy-MM-dd HH:mm:ss",
           displayFormats: {
+            minute: "HH:mm",
             hour: "HH:mm",
           },
           tooltipFormat: "HH:mm:ss",
@@ -149,19 +199,24 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
           display: true,
           text: "Time",
         },
-        min: getCurrentDateAtTime(0),
-        max: getCurrentDateAtTime(22),
+        min: getTimeRangeSettings(timeRange).startTime,
+        max: getTimeRangeSettings(timeRange).endTime,
         ticks: {
           source: "auto",
-          autoSkip: false,
+          maxRotation: 0,
+          stepSize: timeRange === "2h" ? 1 : undefined,
           callback: function (value) {
             const date = new Date(value);
-            const hours = date.getHours();
-            return hours % 2 === 0
-              ? `${hours.toString().padStart(2, "0")}:00`
-              : "";
+            if (timeRange === "2h") {
+              return date.getHours() % 2 === 0
+                ? `${date.getHours().toString().padStart(2, "0")}:00`
+                : "";
+            }
+            return `${date.getHours().toString().padStart(2, "0")}:${date
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}`;
           },
-          maxRotation: 0,
         },
       },
     },
@@ -182,7 +237,16 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
           );
 
           if (outPktsItem && outPktsItem.data.length > 0) {
-            const sortedData = outPktsItem.data.sort(
+            const timeSettings = getTimeRangeSettings(timeRange);
+            const filteredData = outPktsItem.data.filter((entry) => {
+              const timestamp = new Date(entry.timestamp).getTime();
+              return (
+                timestamp >= timeSettings.startTime &&
+                timestamp <= timeSettings.endTime
+              );
+            });
+
+            const sortedData = filteredData.sort(
               (a, b) =>
                 new Date(a.timestamp).getTime() -
                 new Date(b.timestamp).getTime()
@@ -205,11 +269,11 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
                   borderWidth: 4,
                   pointRadius: 1,
                   pointHoverRadius: 4,
-                  pointBackgroundColor: "white",
-                  pointBorderColor: "blue",
+                  pointBackgroundColor: "#87CEEB",
+                  pointBorderColor: "#87CEEB",
                   pointBorderWidth: 2,
                   pointHoverBackgroundColor: "#87CEEB",
-                  pointHoverBorderColor: "white",
+                  pointHoverBorderColor: "blue",
                   fill: false,
                   showLine: true,
                 },
@@ -236,12 +300,21 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
       const interval = setInterval(fetchData, 10000);
       return () => clearInterval(interval);
     }
-  }, [hostId]);
+  }, [hostId, timeRange]);
 
   if (!hasData) {
     return (
       <Box sx={{ mt: 4, mb: 4 }}>
-        {/* <Paper elevation={3} sx={{ p: 3, display: "flex", justifyContent: "center", alignItems: "center", height: "100px" }}>
+        {/* <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100px",
+          }}
+        >
           <Typography color="error" sx={{ p: 2 }}>
             {error || "No data available"}
           </Typography>
@@ -252,7 +325,43 @@ const SNMPOutPkts: React.FC<SNMPOutPktsProps> = ({ hostId }) => {
 
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          height: "500px",
+          position: "relative",
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            right: "24px",
+            top: "24px",
+            zIndex: 1,
+          }}
+        >
+          <FormControl size="small">
+            <Select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="10min">10 minutes</MenuItem>
+              <MenuItem value="30min">30 minutes</MenuItem>
+              <MenuItem value="1hr">1 hour</MenuItem>
+              <MenuItem value="2hr">2 hours</MenuItem>
+              <MenuItem value="6hr">6 hours</MenuItem>
+              <MenuItem value="12hr">12 hours</MenuItem>
+              <MenuItem value="24hr">1 day</MenuItem>
+              {/* <MenuItem value="7d">1 week</MenuItem>
+              <MenuItem value="15d">15 days</MenuItem>
+              <MenuItem value="1mon">1 months</MenuItem> */}
+              {/* <MenuItem value="6mon">6 months</MenuItem>
+              <MenuItem value="1year">1 year</MenuItem> */}
+            </Select>
+          </FormControl>
+        </Box>
         <Box sx={{ height: "100%", position: "relative" }}>
           <Line options={options} data={chartData} />
         </Box>
