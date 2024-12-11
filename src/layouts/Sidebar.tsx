@@ -12,7 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useLocation } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
-import DevicesIcon from '@mui/icons-material/Devices';  // Import DevicesIcon
+import DevicesIcon from "@mui/icons-material/Devices";
 
 interface SidebarProps {
   isHideSidebar: boolean;
@@ -35,7 +35,7 @@ export const SlideBarItems = [
     subItems: [
       {
         id: "sub-1",
-        icon: <DevicesIcon sx={{ fontSize: 20 }} />,  // Use DevicesIcon here
+        icon: <DevicesIcon sx={{ fontSize: 20 }} />,
         name: "Devices",
         path: "/devices",
         newIcon: "",
@@ -91,7 +91,9 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedItem, setExpandedItem] = useState<number | null>(
-    location.pathname.includes('/devices') || location.pathname.includes('/templates') ? 1 : null
+    location.pathname.includes("/devices") || location.pathname.includes("/templates")
+      ? 1
+      : null
   );
 
   const handleItemClick = (item: any) => {
@@ -124,14 +126,12 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               m: 0,
               backgroundColor:
                 location.pathname === item.path ||
-                item.subItems?.some((sub) => sub.path === location.pathname) ||
-                (item.name === "Dashboard" && location.pathname.includes("-"))
+                item.subItems?.some((sub) => sub.path === location.pathname)
                   ? "#F25A28"
                   : "transparent",
               color:
                 location.pathname === item.path ||
-                item.subItems?.some((sub) => sub.path === location.pathname) ||
-                (item.name === "Dashboard" && location.pathname.includes("-"))
+                item.subItems?.some((sub) => sub.path === location.pathname)
                   ? "#FFFFFB"
                   : "#242D5D",
               transition: "background-color 0.3s ease",
@@ -139,28 +139,10 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
           >
             <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
               {item.icon}
-              {/* Render the orange dot for active subitems */}
-              {item.subItems && item.subItems.some(sub => location.pathname.includes(sub.path)) && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%", // Center vertically
-                    left: "50%", // Center horizontally
-                    transform: "translate(-50%, -50%)", // Offset the dot so it's centered on the icon
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    backgroundColor: "#FF5722", // Orange color
-                  }}
-                />
-              )}
               <Box
                 sx={{
                   overflow: "hidden",
-                  maxWidth:
-                    !isHideSidebar && windowSize.width >= 1100
-                      ? "200px"
-                      : "0px",
+                  maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
                   transition: "max-width 0.5s ease",
                 }}
               >
@@ -190,81 +172,77 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
           </Box>
 
           {/* Sub-items */}
-          {item.subItems && expandedItem === item.id && !isHideSidebar && windowSize.width >= 1100 && (
-            <div>
-              {item.subItems.map((subItem) => (
-                <Box
-                  key={subItem.id}
-                  onClick={() => navigate(subItem.path)}
-                  sx={{
-                    mt: 1,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "5px",
-                    p: "5px 30px",
-                    ml: "50px",
-                    backgroundColor:
-                      location.pathname === subItem.path
-                        ? "#FFFFFB"
-                        : "transparent",
-
-                    "&:hover": {
+          {item.subItems &&
+            expandedItem === item.id &&
+            !isHideSidebar &&
+            windowSize.width >= 1100 && (
+              <div>
+                {item.subItems.map((subItem) => (
+                  <Box
+                    key={subItem.id}
+                    onClick={() => navigate(subItem.path)}
+                    sx={{
+                      mt: 1,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "5px",
+                      p: "5px 30px",
+                      ml: "50px",
                       backgroundColor:
-                        location.pathname !== subItem.path
-                          ? "#FFEAE3"
-                          : "#FFEAE3",
-                    },
-                    transition: "background-color 0.3s ease",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
-                    {subItem.icon}
-                    {/* Render the orange dot for active subitems */}
-                    {location.pathname === subItem.path && (
+                        location.pathname === subItem.path ? "#FFFFFB" : "transparent",
+
+                      "&:hover": {
+                        backgroundColor:
+                          location.pathname !== subItem.path ? "#FFEAE3" : "#FFEAE3",
+                      },
+                      transition: "background-color 0.3s ease",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
+                      {subItem.icon}
+                      {/* Render the orange dot for active subitems */}
+                      {location.pathname === subItem.path && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "-12%",
+                            transform: "translate(-50%, -50%)",
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            backgroundColor: "#FF5722",
+                          }}
+                        />
+                      )}
                       <Box
                         sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "-12%", 
-                          transform: "translate(-50%, -50%)", // Offset the dot so it's centered on the icon
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          backgroundColor: "#FF5722", // Orange color
-                        }}
-                      />
-                    )}
-                    <Box
-                      sx={{
-                        overflow: "hidden",
-                        maxWidth:
-                          !isHideSidebar && windowSize.width >= 1100
-                            ? "200px"
-                            : "0px",
-                        transition: "max-width 0.5s ease",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          marginLeft: "30px",
-                          fontSize: 16,
-                          fontWeight: 500,
-                          paddingRight: 1,
-                          whiteSpace: "nowrap",
-                          opacity:
-                            !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
-                          transition: "opacity 0.5s ease",
+                          overflow: "hidden",
+                          maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
+                          transition: "max-width 0.5s ease",
                         }}
                       >
-                        {subItem.name}
-                      </Typography>
+                        <Typography
+                          sx={{
+                            marginLeft: "30px",
+                            fontSize: 16,
+                            fontWeight: 500,
+                            paddingRight: 1,
+                            whiteSpace: "nowrap",
+                            opacity:
+                              !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                            transition: "opacity 0.5s ease",
+                          }}
+                        >
+                          {subItem.name}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
         </div>
       ))}
     </Stack>
