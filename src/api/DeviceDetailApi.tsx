@@ -5,7 +5,7 @@ import { IDevice } from "../interface/IDevice";
 const getDeviceData = async (): Promise<IDevice[]> => {
   try {
     const response = await axios.get<IDevice[]>(
-      "http://localhost:3000/getDevice"
+      "http://localhost:3000/host"
     );
     return response.data;
   } catch (error) {

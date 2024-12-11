@@ -1,13 +1,31 @@
 export interface IDevice {
-  DMACaddress: string;
-  Dname: string | null;
-  location: string | null;
-  hardware: string | null;
-  os: string | null;
-  type: string | null;
-  vendor: string | null;
-  room: string | null;
-  status: boolean;
+  _id: string;
+  hostname: string;
+  ip_address: string;
+  snmp_port: string;
+  snmp_version: string;
+  snmp_community: string;
+  hostgroup: string;
+  details: DeviceDetails;
+  items: Item[];
+  status: number;
+}
+
+export interface DeviceDetails {
+  location: string;
+  Room: string;
+  serialNo: string;
+  os: string;
+  type: string;
+  vendor: string;
+  hardware: string;
+}
+
+export interface Item {
+  name_item: string;
+  oid: string;
+  type: string;
+  unit: string;
 }
 
 export interface IInterface {
@@ -46,3 +64,4 @@ export interface IGraph {
   name: string | null;
   detail: string | null;
 }
+
