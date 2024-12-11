@@ -79,12 +79,12 @@ const Graphs = () => {
 
       {selectedHostId && (
         <>
-          {/* <Box>
+          <Box>
             <SNMPInPkts key={`in-${key}`} hostId={selectedHostId} />
           </Box>
           <Box sx={{ pb: 2 }}>
             <SNMPOutPkts key={`out-${key}`} hostId={selectedHostId} />
-          </Box> */}
+          </Box>
         </>
       )}
     </Container>
