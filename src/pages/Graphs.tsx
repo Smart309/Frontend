@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Typography,
-  Paper,
   Container,
   FormControl,
   Select,
@@ -21,6 +19,7 @@ interface Host {
 const Graphs = () => {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [selectedHostId, setSelectedHostId] = useState<string>("");
+  const [key, setKey] = useState(0); // Add a key state to force re-render
 
   useEffect(() => {
     const fetchHosts = async () => {
@@ -41,6 +40,7 @@ const Graphs = () => {
 
   const handleHostChange = (event: SelectChangeEvent) => {
     setSelectedHostId(event.target.value);
+    setKey((prevKey) => prevKey + 1); // Increment key to force re-render of child components
   };
 
   return (
@@ -79,12 +79,12 @@ const Graphs = () => {
 
       {selectedHostId && (
         <>
-          <Box>
-            <SNMPInPkts hostId={selectedHostId} />
+          {/* <Box>
+            <SNMPInPkts key={`in-${key}`} hostId={selectedHostId} />
           </Box>
           <Box sx={{ pb: 2 }}>
-            <SNMPOutPkts hostId={selectedHostId} />
-          </Box>
+            <SNMPOutPkts key={`out-${key}`} hostId={selectedHostId} />
+          </Box> */}
         </>
       )}
     </Container>

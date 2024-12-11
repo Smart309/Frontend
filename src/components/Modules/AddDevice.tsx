@@ -11,7 +11,7 @@ import {
   SelectChangeEvent,
   Paper,
 } from "@mui/material";
-import useWindowSize from "../hooks/useWindowSize";
+import useWindowSize from "../../hooks/useWindowSize";
 import axios from "axios";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";

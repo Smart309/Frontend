@@ -13,9 +13,9 @@ import {
   ChartOptions,
   Point,
 } from "chart.js";
-import 'chartjs-adapter-date-fns';
+import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
-import { enUS } from 'date-fns/locale';
+import { enUS } from "date-fns/locale";
 
 ChartJS.register(
   TimeScale,
@@ -75,6 +75,12 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
   });
   const [error, setError] = useState<string | null>(null);
 
+  const getCurrentDateAtTime = (hours: number, minutes: number = 0) => {
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date.getTime(); // Return timestamp instead of Date object
+  };
+
   const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -121,20 +127,19 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
         },
       },
       x: {
-        type: 'time',
+        type: "time",
         adapters: {
           date: {
             locale: enUS,
           },
         },
         time: {
-          unit: 'hour',
-          parser: 'yyyy-MM-dd HH:mm:ss',
+          unit: "hour",
+          parser: "yyyy-MM-dd HH:mm:ss",
           displayFormats: {
-            hour: 'HH:mm',
-            minute: 'HH:mm'
+            hour: "HH:mm",
           },
-          tooltipFormat: 'HH:mm:ss'
+          tooltipFormat: "HH:mm:ss",
         },
         grid: {
           display: true,
@@ -143,12 +148,20 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
           display: true,
           text: "Time",
         },
+        min: getCurrentDateAtTime(0), // Now returns timestamp
+        max: getCurrentDateAtTime(22), // Now returns timestamp
         ticks: {
-          source: 'data',
+          source: "auto",
+          autoSkip: false,
+          callback: function (value) {
+            const date = new Date(value);
+            const hours = date.getHours();
+            return hours % 2 === 0
+              ? `${hours.toString().padStart(2, "0")}:00`
+              : "";
+          },
           maxRotation: 0,
-          autoSkip: true,
-          maxTicksLimit: 12,
-        }
+        },
       },
     },
   };
@@ -168,12 +181,16 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
           );
 
           if (inPktsItem) {
-            // Sort data by timestamp and create data points
-            const sortedData = inPktsItem.data
-              .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            const sortedData = inPktsItem.data.sort(
+              (a, b) =>
+                new Date(a.timestamp).getTime() -
+                new Date(b.timestamp).getTime()
+            );
 
-            const labels = sortedData.map(entry => new Date(entry.timestamp).getTime());
-            const values = sortedData.map(entry => Number(entry.value));
+            const labels = sortedData.map((entry) =>
+              new Date(entry.timestamp).getTime()
+            );
+            const values = sortedData.map((entry) => Number(entry.value));
 
             setChartData({
               labels,
@@ -184,14 +201,16 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
                   borderColor: "rgb(75, 192, 192)",
                   backgroundColor: "rgba(75, 192, 192, 0.5)",
                   tension: 0.1,
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
+                  borderWidth: 4, //line weight
+                  pointRadius: 1, //plot weight
+                  pointHoverRadius: 4,
                   pointBackgroundColor: "white",
                   pointBorderColor: "rgb(75, 192, 192)",
                   pointBorderWidth: 2,
                   pointHoverBackgroundColor: "rgb(75, 192, 192)",
                   pointHoverBorderColor: "white",
                   fill: false,
+                  showLine: true,
                 },
               ],
             });

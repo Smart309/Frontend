@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import useWindowSize from "../hooks/useWindowSize";
+import useWindowSize from "../../hooks/useWindowSize";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";

@@ -60,27 +60,12 @@ interface SNMPInPktsProps {
   hostId: string;
 }
 
-const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
+const SNMPOutPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
   const [error, setError] = useState<string | null>(null);
-
-  const timeLabels = [
-    "00:00",
-    "02:00",
-    "04:00",
-    "06:00",
-    "08:00",
-    "10:00",
-    "12:00",
-    "14:00",
-    "16:00",
-    "18:00",
-    "20:00",
-    "22:00",
-  ];
 
   const options: ChartOptions<"line"> = {
     responsive: true,
@@ -95,7 +80,7 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
       },
       title: {
         display: true,
-        text: "SNMP Incoming Packets Monitoring",
+        text: "SNMP Outcoming Packets Monitoring",
         font: {
           size: 16,
           weight: "bold",
@@ -136,8 +121,9 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
           text: "Time",
         },
         ticks: {
-          maxRotation: 0,
-          autoSkip: false,
+          maxRotation: 45,
+          autoSkip: true,
+          maxTicksLimit: 12,
         },
       },
     },
@@ -157,49 +143,44 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
 
         if (result.status === "success") {
           const host = result.data[0];
-          const inPktsItem = host.items.find(
-            (item) => item.item_id.name_item === "snmpInPkts"
+          const outPktsItem = host.items.find(
+            (item) => item.item_id.name_item === "snmpOutPkts"
           );
 
-          if (inPktsItem) {
-            // Initialize array with zeros for each time slot
-            const dataValues = new Array(timeLabels.length).fill(0);
+          if (outPktsItem) {
+            // Sort data by timestamp
+            const sortedData = [...outPktsItem.data].sort(
+              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
 
-            inPktsItem.data.forEach((entry) => {
-              const entryTime = new Date(entry.timestamp);
-              const hours = entryTime.getHours();
-              
-              // Find the appropriate time slot
-              const timeSlot = timeLabels.findIndex((label, index) => {
-                const currentLabelHour = parseInt(label.split(":")[0]);
-                const nextLabel = timeLabels[index + 1];
-                const nextLabelHour = nextLabel 
-                  ? parseInt(nextLabel.split(":")[0])
-                  : 24;
-                
-                return hours >= currentLabelHour && hours < nextLabelHour;
+            // Format timestamps for display
+            const labels = sortedData.map(entry => {
+              const date = new Date(entry.timestamp);
+              return date.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
               });
-
-              if (timeSlot !== -1) {
-                dataValues[timeSlot] = Number(entry.value);
-              }
             });
 
+            // Get the values
+            const values = sortedData.map(entry => Number(entry.value));
+
             setChartData({
-              labels: timeLabels,
+              labels,
               datasets: [
                 {
-                  label: "Incoming Packets",
-                  data: dataValues,
-                  borderColor: "rgb(75, 192, 192)",
-                  backgroundColor: "rgba(75, 192, 192, 0.5)",
+                  label: "Outcoming Packets",
+                  data: values,
+                  borderColor: "rgb(25, 118, 210)", // MUI primary blue
+                  backgroundColor: "rgba(25, 118, 210, 0.5)",
                   tension: 0.1,
                   pointRadius: 4,
                   pointHoverRadius: 6,
                   pointBackgroundColor: "white",
-                  pointBorderColor: "rgb(75, 192, 192)",
+                  pointBorderColor: "rgb(25, 118, 210)",
                   pointBorderWidth: 2,
-                  pointHoverBackgroundColor: "rgb(75, 192, 192)",
+                  pointHoverBackgroundColor: "rgb(25, 118, 210)",
                   pointHoverBorderColor: "white",
                   fill: false,
                 },
@@ -223,7 +204,14 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
 
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 3, height: "500px" }}>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          height: "500px",
+          backgroundColor: "background.paper" 
+        }}
+      >
         {error ? (
           <Typography color="error" sx={{ p: 2 }}>
             {error}
@@ -238,4 +226,4 @@ const SNMPInPkts: React.FC<SNMPInPktsProps> = ({ hostId }) => {
   );
 };
 
-export default SNMPInPkts;
+export default SNMPOutPkts;

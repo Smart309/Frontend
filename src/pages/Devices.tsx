@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
-import AddDevice from "./AddDevice";
+import AddDevice from "../components/Modules/AddDevice";
 
 interface DeviceDetails {
   location: string;
@@ -171,7 +171,7 @@ const Devices: React.FC = () => {
                             backgroundColor: "#f0f0f0",
                             cursor: "pointer",
                           },
-                          mb:2
+                          mb: 2,
                         }}
                       >
                         <Typography variant="h6" fontWeight={600} sx={{}}>
