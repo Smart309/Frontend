@@ -3,8 +3,8 @@ import { Button, Grid, Typography, Box, Dialog, DialogContent, DialogTitle } fro
 import { useNavigate } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
-import AddDevice from "./AddDevice";
 import { IDevice } from "../interface/IDevice";
+import AddDevice from "../components/Modules/AddDevice";
 
 const Devices: React.FC = () => {
   const windowSize = useWindowSize();

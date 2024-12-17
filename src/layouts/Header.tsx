@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Box, Stack, IconButton } from "@mui/material";
 import useWindowSize from "../hooks/useWindowSize";
-import SirenLogo from "../../public/SirenLogo.svg"; 
-import CPESirenLogo from "../../public/CPESiren.svg"; 
-import MenuOpenImage from "../../public/menuOpen.png";
-import MenuCloseImage from "../../public/menuClose.png";
+import SirenLogo from "../assets/SirenLogo.svg"; 
+import CPESirenLogo from "../assets/CPESiren.svg"; 
+import MenuOpenImage from "../assets/menuOpen.png";
+import MenuCloseImage from "../assets/menuClose.png";
 
 interface HeaderProps {
   isHideSidebar: boolean;

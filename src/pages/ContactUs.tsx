@@ -1,5 +1,6 @@
 import useWindowSize from "../hooks/useWindowSize";
 import { Box, Typography } from "@mui/material";
+import contactus from "../assets/ContactUs.png";
 
 const ContactUs = () => {
   const windowSize = useWindowSize();
@@ -64,7 +65,6 @@ const ContactUs = () => {
               height: "auto",
               borderRadius: "25px",
               pt: 5,
-              
             }}
           >
             <Box
@@ -73,10 +73,10 @@ const ContactUs = () => {
                 width: "100%",
                 height: "auto",
                 borderRadius: "25px",
-                mt : "-80px",
+                mt: "-80px",
               }}
               alt="Contact Us"
-              src="./ContactUs.png"
+              src={contactus}
             />
           </Box>
         </Box>

@@ -1,4 +1,3 @@
-// AddDevice.tsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -11,7 +10,7 @@ import {
   SelectChangeEvent,
   Paper,
 } from "@mui/material";
-import useWindowSize from "../hooks/useWindowSize";
+import useWindowSize from "../../hooks/useWindowSize";
 import axios from "axios";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -311,6 +310,53 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabvalue(newValue);
+  };
+
+  // Add new function to handle interface scanning
+  const handleScanInterface = async () => {
+    if (!ip_address || !snmp_port || !snmp_version || !snmp_community) {
+      alert("Please fill in all SNMP interface details before scanning");
+      setTabvalue("host"); // Switch back to host tab if details are missing
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://127.0.0.1:3000/item/interface", {
+        params: {
+          ip_address: ip_address,
+          port: snmp_port,
+          version: snmp_version,
+          community: snmp_community,
+        },
+      });
+
+      if (response.data && Array.isArray(response.data.data)) {
+        // Convert the interface data to the DeviceItems format
+        const interfaceItems = response.data.data.map(
+          (item: any, index: number) => ({
+            id: index + 1,
+            name_item: item.name_item || "",
+            oid: item.oid || "",
+            type: item.type || "",
+            unit: item.unit || "",
+            interval: item.interval || 0,
+          })
+        );
+
+        // Update the item rows with the scanned interface data
+        setItemRows(interfaceItems);
+
+        // Switch to items tab to show the results
+        setTabvalue("item");
+      } else {
+        alert("No interface data found");
+      }
+    } catch (error) {
+      console.error("Error scanning interfaces:", error);
+      alert(
+        "Failed to scan interfaces. Please check your SNMP details and try again."
+      );
+    }
   };
 
   return (
@@ -708,6 +754,18 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                     }}
                   />
                 </IconButton>
+              </Box>
+              <Box sx={{ justifyItems: "flex-end" }}>
+                <Button
+                  onClick={handleScanInterface}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    color: "blue",
+                  }}
+                >
+                  Scan interface
+                </Button>
               </Box>
               <TableContainer>
                 <Table size="small">

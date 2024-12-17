@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import useWindowSize from "../hooks/useWindowSize";
-import AddTemplate from "./AddTemplate";
+import AddTemplate from "../components/Modules/AddTemplate";
 
 const Templates: React.FC = () => {
   const windowSize = useWindowSize();
