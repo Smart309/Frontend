@@ -323,27 +323,29 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
     try {
       const response = await axios.get("http://127.0.0.1:3000/item/interface", {
         params: {
-          ip_address,
-          snmp_port,
-          snmp_version,
-          snmp_community,
-        }
+          ip_address: ip_address,
+          port: snmp_port,
+          version: snmp_version,
+          community: snmp_community,
+        },
       });
 
       if (response.data && Array.isArray(response.data.data)) {
         // Convert the interface data to the DeviceItems format
-        const interfaceItems = response.data.data.map((item: any, index: number) => ({
-          id: index + 1,
-          name_item: item.name_item || "",
-          oid: item.oid || "",
-          type: item.type || "",
-          unit: item.unit || "",
-          interval: item.interval || 0,
-        }));
+        const interfaceItems = response.data.data.map(
+          (item: any, index: number) => ({
+            id: index + 1,
+            name_item: item.name_item || "",
+            oid: item.oid || "",
+            type: item.type || "",
+            unit: item.unit || "",
+            interval: item.interval || 0,
+          })
+        );
 
         // Update the item rows with the scanned interface data
         setItemRows(interfaceItems);
-        
+
         // Switch to items tab to show the results
         setTabvalue("item");
       } else {
@@ -351,7 +353,9 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       }
     } catch (error) {
       console.error("Error scanning interfaces:", error);
-      alert("Failed to scan interfaces. Please check your SNMP details and try again.");
+      alert(
+        "Failed to scan interfaces. Please check your SNMP details and try again."
+      );
     }
   };
 

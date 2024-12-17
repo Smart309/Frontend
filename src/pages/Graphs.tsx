@@ -5,88 +5,121 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Paper,
+  Grid,
   SelectChangeEvent,
 } from "@mui/material";
-import axios from "axios";
-import SNMPInPkts from "../components/graphComponent/SNMPInPkts";
-import SNMPOutPkts from "../components/graphComponent/SNMPOutPkts";
+import MetricGraph, {
+  Item,
+  ItemId,
+  DataEntry,
+} from "../components/graphComponent/MetricGraph";
 
-interface Host {
+interface HostId {
   _id: string;
   hostname: string;
 }
 
+interface Host {
+  _id: HostId;
+  items: Item[];
+}
+
+interface ApiResponse {
+  status: string;
+  message: string;
+  data: Host[];
+}
+
 const Graphs = () => {
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [selectedHostId, setSelectedHostId] = useState<string>("");
-  const [key, setKey] = useState(0); // Add a key state to force re-render
+  const [selectedHost, setSelectedHost] = useState<string>("");
 
   useEffect(() => {
-    const fetchHosts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/host");
-        setHosts(response.data.data);
-        // Optionally set first host as default
-        if (response.data.data.length > 0) {
-          setSelectedHostId(response.data.data[0]._id);
+        const response = await fetch("http://127.0.0.1:3000/data");
+        const result: ApiResponse = await response.json();
+
+        if (result.status === "success") {
+          const sortedData = result.data.map((host: Host) => ({
+            ...host,
+            items: [...host.items].sort((a: Item, b: Item) =>
+              a.item_id.name_item.localeCompare(b.item_id.name_item)
+            ),
+          }));
+
+          setHosts(sortedData);
+          if (sortedData.length > 0) {
+            setSelectedHost(sortedData[0]._id._id);
+          }
         }
       } catch (error) {
-        console.error("Error fetching hosts:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchHosts();
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleHostChange = (event: SelectChangeEvent) => {
-    setSelectedHostId(event.target.value);
-    setKey((prevKey) => prevKey + 1); // Increment key to force re-render of child components
+  const handleHostChange = (event: SelectChangeEvent<string>) => {
+    setSelectedHost(event.target.value);
   };
+
+  const selectedHostData = hosts.find((host) => host._id._id === selectedHost);
+
+  const sortedItems = React.useMemo(() => {
+    if (!selectedHostData?.items) return [];
+    return [...selectedHostData.items].sort((a: Item, b: Item) =>
+      a.item_id.name_item.localeCompare(b.item_id.name_item)
+    );
+  }, [selectedHostData]);
 
   return (
     <Container maxWidth="lg">
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          mb: 3,
-          mt: 2,
-        }}
-      >
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <Select
-            value={selectedHostId}
-            onChange={handleHostChange}
-            displayEmpty
-            sx={{
-              backgroundColor: "white",
-              "& .MuiSelect-select": {
-                fontSize: 14,
-              },
-            }}
-          >
-            {/* <MenuItem value="">
-              <em>Select Device</em>
-            </MenuItem> */}
-            {hosts.map((host) => (
-              <MenuItem key={host._id} value={host._id}>
-                {host.hostname}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+      <Box sx={{ mt: 4, mb: 4 }}>
+        <Box sx={{ display: "flex", mb: 4 }}>
+          <FormControl size="small">
+            <Select
+              value={selectedHost}
+              onChange={handleHostChange}
+              sx={{
+                minWidth: 200,
+                backgroundColor: "white",
+                "& .MuiSelect-select": {
+                  fontSize: 14,
+                },
+              }}
+            >
+              {hosts.map((host: Host) => (
+                <MenuItem key={host._id._id} value={host._id._id}>
+                  {host._id.hostname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
 
-      {selectedHostId && (
-        <>
-          {/* <Box>
-            <SNMPInPkts key={`in-${key}`} hostId={selectedHostId} />
-          </Box>
-          <Box sx={{ pb: 2 }}>
-            <SNMPOutPkts key={`out-${key}`} hostId={selectedHostId} />
-          </Box> */}
-        </>
-      )}
+        <Grid container spacing={3}>
+          {sortedItems.map((item: Item) => (
+            <Grid item xs={12} key={item.item_id.name_item}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  minHeight: "500px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <MetricGraph item={item} />
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     </Container>
   );
 };
