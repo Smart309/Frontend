@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Box, Typography, ButtonBase } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { IDevice } from "../../interface/IDevice";
+import ComputerDevice from "../../assets/ComputerDevice.svg";
 
 interface DevicesCardProps {
   device: IDevice;
@@ -21,32 +22,104 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
       onClick={handleClick}
       disabled={!device.status}
       sx={{
-        width: "100%",
+        width: "18rem",
+        height: "9.3rem",
         textAlign: "left",
         opacity: device.status ? 1 : 0.5,
+        transition: "all 0.3s ease",
+        outline: "none",
+        "&:focus": {
+          outline: "none !important",
+        },
         "&:hover": {
           transform: device.status ? "scale(1.05)" : "none",
-          boxShadow: device.status ? "0 4px 20px rgba(0,0,0,0.1)" : "none",
         },
       }}
     >
       <Card
         sx={{
-          padding: 2,
-          border: "1px solid #ddd",
-          borderRadius: 2,
-          backgroundColor: "#f9f9f9",
-          "&:hover": {
-            backgroundColor: "#f0f0f0",
-          },
+          height: "100%",
+          width: "100%",
+          bgcolor: "#FFFFFB",
+          borderRadius: "30px",
+          position: "relative",
+          boxShadow: "none",
+          border: "3px solid #242D5D",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          transition: "all 0.3s ease",
         }}
       >
-        <Typography variant="h6" fontWeight={600}>
-          {device.hostname}
-        </Typography>
-        <Typography>Room: {device.details?.Room || "N/A"}</Typography>
-        <Typography>Type: {device.details?.type || "N/A"}</Typography>
-        <Typography>Serial: {device.details?.serialNo || "N/A"}</Typography>
+        <Box sx={{ marginTop: "0.6rem" }}>
+          <Typography
+            variant="h6"
+            component="div"
+            color={"#242D5D"}
+            sx={{
+              transition: "color 0.3s ease",
+              "&:focus": {
+                outline: "none",
+              },
+              "&:hover": {
+                color: device.status ? "#3f51b5" : "#242D5D",
+              },
+            }}
+          >
+            {device.hostname || "Device Name"}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "1.5rem",
+            left: "1.5rem",
+            right: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center"  }}>
+            <Box
+              component="img"
+              src={ComputerDevice}
+              alt="Computer Device"
+              width={100}
+              sx={{
+                marginRight: "18px",
+                transition: "transform 0.3s ease",
+              }}
+            />
+            <Box>
+              <Typography variant="h6" component="div" color={"#242D5D"}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span>Room</span>
+                  <span style={{ marginLeft: 10 ,}}>{device.details?.Room || "N/A"}</span>
+                </Box>
+              </Typography>
+              <Typography
+                variant="h6"
+                component="div"
+                color={"#242D5D"}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span>Type</span>
+                  <span style={{ marginLeft: 10 }}>{device.details?.type || "N/A"}</span>
+                </Box>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
       </Card>
     </ButtonBase>
   );

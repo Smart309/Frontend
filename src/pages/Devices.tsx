@@ -76,7 +76,7 @@ const Devices: React.FC = () => {
         </Box>
       )}
 
-      <Box sx={{ marginTop: 2 }}>
+      <Box sx={{ marginTop: 2, paddingBottom: 3 }}> 
         {loading ? (
           <Typography>Loading...</Typography>
         ) : (
