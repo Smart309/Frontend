@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Typography, Button, Alert } from "@mui/material";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import NewLogo from "../assets/NewLogo.svg";
+import LoginLeftside from "../assets/LoginLeftside.svg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,19 +26,19 @@ const Login = () => {
         width: "100%",
         height: "100vh",
         overflow: "hidden",
-        position: "relative", 
+        position: "relative",
       }}
     >
       {/* CMU Siren Logo */}
       <Box
         component="img"
-        src="../../public/NewLogo.svg" 
+        src={NewLogo}
         alt="CMU Siren Logo"
         sx={{
           position: "absolute",
           top: "5px",
-          right: "5px", 
-          width: "20vh", 
+          right: "5px",
+          width: "20vh",
           height: "auto",
         }}
       />
@@ -48,7 +50,7 @@ const Login = () => {
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "center",
-          backgroundImage: `url('../../public/LoginLeftside.svg')`,
+          backgroundImage: `url(${LoginLeftside})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
