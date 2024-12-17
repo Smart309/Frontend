@@ -13,7 +13,6 @@ import {
 import { Box } from "@mui/system";
 import { Pencil, Trash2 } from "lucide-react";
 import useWindowSize from "../hooks/useWindowSize";
-import AddDevice from "../components/Modules/AddDevice";
 
 interface DeviceDetails {
   location: string;
@@ -83,11 +82,11 @@ const Management: React.FC = () => {
 
   // Column headers for the grid
   const columns = [
-    { field: 'hostname', label: 'Hostname' },
-    { field: 'ip_address', label: 'IP Address' },
-    { field: 'details.location', label: 'Location' },
-    { field: '_id', label: 'ID' },
-    { field: 'actions', label: 'Actions' }
+    { field: "hostname", label: "Hostname" },
+    { field: "ip_address", label: "IP Address" },
+    { field: "details.location", label: "Location" },
+    { field: "_id", label: "ID" },
+    { field: "actions", label: "Actions" },
   ];
 
   return (
@@ -114,77 +113,101 @@ const Management: React.FC = () => {
         </Box>
       )}
 
-      <Paper sx={{ mt: 2, p: 2 }}>
-        {/* Header Row */}
-        <Grid container spacing={2} sx={{ mb: 2, fontWeight: 'bold' }}>
-          {columns.map((column) => (
-            <Grid 
-              item 
-              xs={column.field === 'actions' ? 2 : 2.5} 
-              key={column.field}
-            >
-              <Typography variant="subtitle1" fontWeight={600}>
-                {column.label}
-              </Typography>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Data Rows */}
-        {loading ? (
-          <Typography>Loading...</Typography>
-        ) : (
-          devices.map((device) => (
-            <Grid
-              container
-              spacing={2}
-              key={device._id}
-              sx={{
-                py: 2,
-                borderBottom: '1px solid #eee',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
+      <Box
+        sx={{
+          width: 1,
+          marginTop: 2,
+          height: "auto",
+          display: "flex",
+        }}
+      >
+        <Paper
+          sx={{
+            mt: 2,
+            p: 2,
+            maxWidth: "100%", // Limit maximum width
+            mx: "auto", // Center horizontally
+            width: "100%", // Take full width up to maxWidth
+          }}
+        >
+          {/* Header Row */}
+          <Grid container spacing={2} sx={{ mb: 2, fontWeight: "bold" }}>
+            {columns.map((column) => (
+              <Grid
+                item
+                xs={
+                  column.field === "_id"
+                    ? 3
+                    : column.field === "ip_address" ||
+                      column.field === "actions"
+                    ? 2
+                    : 2.3
                 }
-              }}
-            >
-              <Grid item xs={2.5}>
-                <Typography>{device.hostname}</Typography>
+                key={column.field}
+              >
+                <Typography variant="subtitle1" fontWeight={600}>
+                  {column.label}
+                </Typography>
               </Grid>
-              <Grid item xs={2.5}>
-                <Typography>{device.ip_address}</Typography>
+            ))}
+          </Grid>
+
+          {/* Data Rows */}
+          {loading ? (
+            <Typography>Loading...</Typography>
+          ) : (
+            devices.map((device) => (
+              <Grid
+                container
+                spacing={2}
+                key={device._id}
+                sx={{
+                  py: 2,
+                  borderBottom: "1px solid #eee",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              >
+                <Grid item xs={2.3} sx={{}}>
+                  <Typography>{device.hostname}</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography>{device.ip_address}</Typography>
+                </Grid>
+                <Grid item xs={2.3}>
+                  <Typography>{device.details.location}</Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography>{device._id}</Typography>
+                </Grid>
+                <Grid item xs={2} sx={{ display: "flex", gap: 1 }}>
+                  <IconButton
+                    onClick={() => handleEdit(device._id)}
+                    size="small"
+                    sx={{
+                      color: "orange",
+                      "&:hover": { backgroundColor: "yellow" },
+                    }}
+                  >
+                    <Pencil size={18} />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDelete(device._id)}
+                    size="small"
+                    sx={{
+                      color: "error.main",
+                      "&:hover": { backgroundColor: "error.light" },
+                    }}
+                  >
+                    <Trash2 size={18} />
+                  </IconButton>
+                </Grid>
               </Grid>
-              <Grid item xs={2.5}>
-                <Typography>{device.details.location}</Typography>
-              </Grid>
-              <Grid item xs={2.5}>
-                <Typography>{device._id}</Typography>
-              </Grid>
-              <Grid item xs={2} sx={{ display: 'flex', gap: 1 }}>
-                <IconButton 
-                  onClick={() => handleEdit(device._id)}
-                  size="small"
-                  sx={{ 
-                    color: 'primary.main',
-                    '&:hover': { backgroundColor: 'primary.light' }
-                  }}
-                >
-                  <Pencil size={18} />
-                </IconButton>
-                <IconButton 
-                  onClick={() => handleDelete(device._id)}
-                  size="small"
-                  sx={{ 
-                    color: 'error.main',
-                    '&:hover': { backgroundColor: 'error.light' }
-                  }}
-                >
-                  <Trash2 size={18} />
-                </IconButton>
-              </Grid>
-            </Grid>
-          ))
-        )}
-      </Paper>
+            ))
+          )}
+        </Paper>
+      </Box>
     </>
   );
 };
