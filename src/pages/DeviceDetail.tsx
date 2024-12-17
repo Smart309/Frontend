@@ -1,216 +1,71 @@
-import { Button, Typography, Grid } from "@mui/material";
-import { Box } from "@mui/system";
 import { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import useWindowSize from "../hooks/useWindowSize";
+import { Box, Typography, Divider } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import { IDevice } from "../interface/IDevice";
+import { getDeviceData } from "../api/DeviceDetailApi";
+import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent";  // Updated import
+import DeviceInterfaceComponent from "../components/devicesComponents/deviceDetail/DeviceInterfaceComponent";
 
-interface DeviceDetails {
-  location: string;
-  Room: string;
-  serialNo: string;
-  os: string;
-  type: string;
-  vendor: string;
-  hardware: string;
-}
-
-interface Item {
-  name_item: string;
-  oid: string;
-  type: string;
-  unit: string;
-}
-
-interface Device {
-  _id: string;
-  hostname: string;
-  ip_address: string;
-  snmp_port: string;
-  snmp_version: string;
-  snmp_community: string;
-  hostgroup: string;
-  details: DeviceDetails;
-  items: Item[];
-  status: number;
-}
-
-const DeviceDetail = () => {
-  const windowSize = useWindowSize();
+const DeviceDetailPage = () => {
   const location = useLocation();
-  const { serialNo } = useParams();
-  const [deviceData, setDeviceData] = useState<Device | null>(
+  const [deviceData, setDeviceData] = useState<IDevice | null>(
     location.state?.device || null
   );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDeviceData = async () => {
-      if (!deviceData && serialNo) {
+    if (!deviceData) {
+      setLoading(true);
+      const fetchDeviceData = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/host`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch device data");
-          }
-          const result = await response.json();
-          const device = result.data.find(
-            (d: Device) => d.details.serialNo === serialNo
+          const allDevices = await getDeviceData();
+          setDeviceData(
+            allDevices.find((d) => d.hostname === location.state?.device?.DName) ||
+              null
           );
-          setDeviceData(device || null);
         } catch (error) {
-          console.error("Error fetching device data:", error);
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError("An unknown error occurred");
+          }
+        } finally {
+          setLoading(false);
         }
-      }
-    };
+      };
 
-    fetchDeviceData();
-  }, [deviceData, serialNo]);
+      fetchDeviceData();
+    }
+  }, [deviceData, location.state?.device?.DName]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   if (!deviceData) {
-    return <Typography>Loading...</Typography>;
+    return <div>No device data available.</div>;
   }
 
   return (
-    <>
-      {windowSize.width > 600 && (
-        <Box
-          sx={{
-            width: 1,
-            display: "flex",
-            justifyContent: "flex-start",
-            marginTop: 5,
-            marginBottom: 3,
-          }}
-        >
-          <Typography
-            variant="h4"
-            component="h1"
-            fontWeight={600}
-            color={"#242D5D"}
-          >
-            DEVICE DETAILS
-          </Typography>
-        </Box>
-      )}
+    <Box sx={{ marginTop: 2, padding: 4 }}>
+      <Typography variant="h4" component="h1" fontWeight={600} color={"#242D5D"}>
+        Device Details
+      </Typography>
 
-      <Box
-        sx={{
-          width: 1,
-          marginTop: 2,
-          height: "auto",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Box
-          sx={{
-            backgroundColor: "#FFFFFB",
-            flex: 1,
-            display: "flex",
-            borderRadius: 8,
-            flexDirection: "column",
-            padding: 4,
-            marginBottom: 5,
-          }}
-        >
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Basic Information
-              </Typography>
-              <Typography>Hostname: {deviceData.hostname}</Typography>
-              <Typography>IP Address: {deviceData.ip_address}</Typography>
-              <Typography>Host Group: {deviceData.hostgroup}</Typography>
-              <Typography>SNMP Version: {deviceData.snmp_version}</Typography>
-              <Typography>SNMP Port: {deviceData.snmp_port}</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Device Details
-              </Typography>
-              <Typography>Location: {deviceData.details.location}</Typography>
-              <Typography>Room: {deviceData.details.Room}</Typography>
-              <Typography>
-                Serial Number: {deviceData.details.serialNo}
-              </Typography>
-              <Typography>OS: {deviceData.details.os}</Typography>
-              <Typography>Type: {deviceData.details.type}</Typography>
-              <Typography>Vendor: {deviceData.details.vendor}</Typography>
-              <Typography>Hardware: {deviceData.details.hardware}</Typography>
-            </Grid>
-          </Grid>
-        </Box>
+      {/* Device Info Component */}
+      <DeviceDetailComponent deviceData={deviceData} />
 
-        <Box
-          sx={{
-            width: 1,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 3,
-          }}
-        >
-          <Typography
-            variant="h4"
-            component="h1"
-            fontWeight={600}
-            color={"#242D5D"}
-          >
-            INTERFACE
-          </Typography>
-          <Button
-            sx={{
-              color: "#FFFFFB",
-              backgroundColor: "#F25A28",
-              fontSize: "1rem",
-              fontWeight: 600,
-              borderRadius: "70px",
-              width: "5.5rem",
-              height: "2.5rem",
-              "&:hover": {
-                backgroundColor: "#F37E58",
-              },
-            }}
-          >
-            Graph
-          </Button>
-        </Box>
+      <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
 
-        <Box
-          sx={{
-            backgroundColor: "#FFFFFB",
-            flex: 1,
-            display: "flex",
-            borderRadius: 8,
-            flexDirection: "column",
-            padding: 4,
-          }}
-        >
-          <Grid container spacing={2}>
-            {deviceData.items.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Box
-                  sx={{
-                    padding: 2,
-                    border: "1px solid #ddd",
-                    borderRadius: 2,
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  <Typography variant="h6" fontWeight={600}>
-                    {item.name_item}
-                  </Typography>
-                  <Typography>OID: {item.oid}</Typography>
-                  <Typography>Type: {item.type}</Typography>
-                  <Typography>Unit: {item.unit}</Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    </>
+      {/* Device Items Component */}
+      <DeviceInterfaceComponent items={deviceData.items} />
+    </Box>
   );
 };
 
-export default DeviceDetail;
-
-//end process in this page
+export default DeviceDetailPage;
