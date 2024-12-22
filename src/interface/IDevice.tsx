@@ -65,3 +65,12 @@ export interface IGraph {
   detail: string | null;
 }
 
+
+export interface ITrigger {
+  trigger_name: string;
+  enabled: boolean;
+  severity: string;
+  valuetrigger: number;
+  comparisonOperator: string;
+  createAt: string;
+}
