@@ -13,6 +13,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useLocation } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesIcon from "@mui/icons-material/Devices";
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import EventIcon from '@mui/icons-material/Event';
 
 interface SidebarProps {
   isHideSidebar: boolean;
@@ -76,6 +78,22 @@ export const SlideBarItems = [
     name: "Alerts",
     path: "/alerts",
     newIcon: "",
+    subItems: [
+      {
+        id: "sub-1",
+        icon: <NewReleasesIcon sx={{ fontSize: 20 }} />,
+        name: "Trigger",
+        path: "trigger",
+        newIcon: "",
+      },
+      {
+        id: "sub-2",
+        icon: <EventIcon sx={{ fontSize: 20 }} />,
+        name: "Event",
+        path: "event",
+        newIcon: "",
+      },
+    ],
   },
   {
     id: 7,
@@ -91,23 +109,38 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedItem, setExpandedItem] = useState<number | null>(
-    location.pathname.includes("/devices") || location.pathname.includes("/templates")
+    location.pathname.includes("/devices") ||
+    location.pathname.includes("/templates") ||
+    location.pathname.includes("/alerts")
       ? 1
       : null
   );
 
   const handleItemClick = (item: any) => {
-    if (item.subItems) {
-      if (expandedItem === item.id) {
-        setExpandedItem(null);
-      } else {
-        setExpandedItem(item.id);
-        navigate(item.subItems[0].path);
-      }
+    if (item.id === 6) {  
+      handleItemClickAlert(item);
     } else {
-      setExpandedItem(null);
-      navigate(item.path);
+      if (item.subItems) {
+        if (expandedItem === item.id) {
+          setExpandedItem(null);
+        } else {
+          setExpandedItem(item.id);
+          navigate(item.subItems[0].path); 
+        }
+      } else {
+        setExpandedItem(null);
+        navigate(item.path);
+      }
     }
+  };
+
+  const handleItemClickAlert = (item: any) => {
+    if (expandedItem === item.id) {
+      setExpandedItem(null);  
+    } else {
+      setExpandedItem(item.id);  
+    }
+    navigate(item.path);
   };
 
   return (
@@ -126,17 +159,19 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               m: 0,
               backgroundColor:
                 location.pathname === item.path ||
-                item.subItems?.some((sub) => sub.path === location.pathname)
+                item.subItems?.some((sub) => sub.path === location.pathname) ||
+                (item.id === 6 && expandedItem === item.id) 
                   ? "#F25A28"
                   : "transparent",
               color:
                 location.pathname === item.path ||
-                item.subItems?.some((sub) => sub.path === location.pathname)
+                item.subItems?.some((sub) => sub.path === location.pathname) ||
+                (item.id === 6 && expandedItem === item.id) 
                   ? "#FFFFFB"
                   : "#242D5D",
               transition: "background-color 0.3s ease",
             }}
-          >
+            >
             <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
               {item.icon}
               <Box
@@ -169,7 +204,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               ) : (
                 <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />
               ))}
-          </Box>
+            </Box>
 
           {/* Sub-items */}
           {item.subItems &&
@@ -180,7 +215,10 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                 {item.subItems.map((subItem) => (
                   <Box
                     key={subItem.id}
-                    onClick={() => navigate(subItem.path)}
+                    onClick={() => {
+                      navigate(subItem.path);
+                      setExpandedItem(item.id); 
+                    }}
                     sx={{
                       mt: 1,
                       cursor: "pointer",
@@ -190,19 +228,20 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                       p: "5px 30px",
                       ml: "50px",
                       backgroundColor:
-                        location.pathname === subItem.path ? "#FFFFFB" : "transparent",
+                        location.pathname === subItem.path ||
+                        (expandedItem === 6 && location.pathname.includes("/alerts"))
+                          ? "transparent"
+                          : "transparent",
 
                       "&:hover": {
-                        backgroundColor:
-                          location.pathname !== subItem.path ? "#FFEAE3" : "#FFEAE3",
+                        backgroundColor: location.pathname !== subItem.path ? "#FFEAE3" : "#FFEAE3",
                       },
                       transition: "background-color 0.3s ease",
                     }}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
                       {subItem.icon}
-                      {/* Render the orange dot for active subitems */}
-                      {location.pathname === subItem.path && (
+                      {location.pathname.includes(subItem.path) && ( 
                         <Box
                           sx={{
                             position: "absolute",
@@ -215,7 +254,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                             backgroundColor: "#FF5722",
                           }}
                         />
-                      )}
+                        )}
                       <Box
                         sx={{
                           overflow: "hidden",
@@ -230,8 +269,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                             fontWeight: 500,
                             paddingRight: 1,
                             whiteSpace: "nowrap",
-                            opacity:
-                              !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                            opacity: !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
                             transition: "opacity 0.5s ease",
                           }}
                         >

@@ -94,6 +94,9 @@ import Devices from "./pages/Devices";
 import DeviceDetail from "./pages/DeviceDetail";
 import Templates from "./pages/Template";
 import Login from "./pages/Login";
+import Event from "./pages/Event";
+import Trigger from "./pages/Trigger";
+
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -133,6 +136,8 @@ const App = () => {
             <Route path="/devices" element={<Devices />} />
             <Route path="/devicedetail/:serialNo" element={<DeviceDetail />} />
             <Route path="/templates" element={<Templates />} />
+            <Route path="/trigger" element={<Trigger />} />
+            <Route path="/event" element={<Event />} />
           </Route>
 
           {/* Catch all other routes and redirect to main login page */}
