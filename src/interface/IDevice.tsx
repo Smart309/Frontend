@@ -65,3 +65,12 @@ export interface IGraph {
   detail: string | null;
 }
 
+export interface IEvent {
+  _id: string;
+  trigger_id: string;
+  status: string;
+  message: string;
+  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
+}
