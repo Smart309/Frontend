@@ -13,7 +13,7 @@ export const getPageName = (pathname: string): string => {
     "Devices",
     "Graphs",
     "Storages",
-    "Menagement",
+    "Management",
     "Alerts",
     "Contact",
   ];
@@ -27,6 +27,7 @@ export default function MainLayout() {
   const windowSize = useWindowSize();
   const [isHideSidebar, setIsHideSidebar] = useState(false);
 
+  // Function to toggle sidebar visibility
   const handleHideSidebar = (width: number) => {
     if (width >= 1100) setIsHideSidebar((state) => !state);
   };
@@ -58,7 +59,11 @@ export default function MainLayout() {
             isHideSidebar={isHideSidebar}
             handleHideSidebar={handleHideSidebar}
           />
-          <Sidebar isHideSidebar={isHideSidebar} />
+          {/* Pass both isHideSidebar and handleHideSidebar to Sidebar */}
+          <Sidebar
+            isHideSidebar={isHideSidebar}
+            toggleSidebar={() => setIsHideSidebar(!isHideSidebar)}
+          />
           <Footer isHideSidebar={isHideSidebar} />
         </Stack>
       ) : (
