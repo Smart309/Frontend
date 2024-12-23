@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Box, Typography, ButtonBase } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { IDevice } from "../../interface/IDevice";
+import { IDevice } from "../../interface/InterfaceCollection";
 import ComputerDevice from "../../assets/ComputerDevice.svg";
 
 interface DevicesCardProps {
@@ -13,7 +13,7 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
 
   const handleClick = () => {
     if (device.status) {
-      navigate(`/devicedetail/${device.details.serialNo}`, { state: { device } });
+      navigate(`/devicedetail/${device._id}`, { state: { device } });
     }
   };
 
@@ -79,7 +79,7 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
             alignItems: "center",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center"  }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box
               component="img"
               src={ComputerDevice}
@@ -98,23 +98,23 @@ const DevicesCard: React.FC<DevicesCardProps> = ({ device }) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>Room</span>
-                  <span style={{ marginLeft: 10 ,}}>{device.details?.Room || "N/A"}</span>
+                  <Typography>Room</Typography>
+                  <Typography style={{ marginLeft: 10 }}>
+                    {device.details?.Room || "N/A"}
+                  </Typography>
                 </Box>
               </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                color={"#242D5D"}
-              >
+              <Typography variant="h6" component="div" color={"#242D5D"}>
                 <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>Type</span>
-                  <span style={{ marginLeft: 10 }}>{device.details?.type || "N/A"}</span>
+                  <Typography>Type</Typography>
+                  <Typography style={{ marginLeft: 10 }}>
+                    {device.details?.type || "N/A"}
+                  </Typography>
                 </Box>
               </Typography>
             </Box>

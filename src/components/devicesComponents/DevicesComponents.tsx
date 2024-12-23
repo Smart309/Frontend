@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Typography, Box } from "@mui/material";
 import DevicesCard from "./DevicesCard";
-import { IDevice } from "../../interface/IDevice";
+import { IDevice } from "../../interface/InterfaceCollection";
 
 interface DevicesComponentsProps {
   devices: IDevice[];
@@ -43,22 +43,22 @@ const DevicesComponents: React.FC<DevicesComponentsProps> = ({ devices }) => {
           <Box
             sx={{
               display: "flex",
-              overflowX: "auto", 
+              overflowX: "auto",
               gap: 2,
               padding: 1,
               paddingBottom: 3,
-              "&::-webkit-scrollbar": { height: "8px" }, 
+              "&::-webkit-scrollbar": { height: "8px" },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#21248B", 
+                backgroundColor: "#21248B",
                 borderRadius: "4px",
               },
               "&::-webkit-scrollbar-thumb:hover": {
-                backgroundColor: "#23269E", 
+                backgroundColor: "#23269E",
               },
             }}
           >
             {devices.map((device) => (
-              <Box key={device._id} sx={{ flex: "0 0 200px"  }}>
+              <Box key={device._id} sx={{ flex: "0 0 200px" }}>
                 <DevicesCard device={device} />
               </Box>
             ))}

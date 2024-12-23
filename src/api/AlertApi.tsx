@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IAlert } from "../interface/IDevice";
+import { IAlert } from "../interface/InterfaceCollection";
 
 const getAlertData = async (): Promise<IAlert[]> => {
   try {

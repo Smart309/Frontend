@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography, Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Typography,
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesComponents from "../components/devicesComponents/DevicesComponents";
-import { IDevice } from "../interface/IDevice";
+import { IDevice } from "../interface/InterfaceCollection";
 import AddDevice from "../components/Modules/AddDevice";
 
 const Devices: React.FC = () => {
@@ -76,15 +84,13 @@ const Devices: React.FC = () => {
         </Box>
       )}
 
-      <Box sx={{ marginTop: 2, paddingBottom: 3 }}> 
+      <Box sx={{ marginTop: 2, paddingBottom: 3 }}>
         {loading ? (
           <Typography>Loading...</Typography>
+        ) : devices.length > 0 ? (
+          <DevicesComponents devices={devices} />
         ) : (
-          devices.length > 0 ? (
-            <DevicesComponents devices={devices} />
-          ) : (
-            <Typography>No devices available</Typography>
-          )
+          <Typography>No devices available</Typography>
         )}
       </Box>
 

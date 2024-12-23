@@ -22,7 +22,8 @@ export interface DeviceDetails {
 }
 
 export interface Item {
-  name_item: string;
+  _id: string;
+  item_name: string;
   oid: string;
   type: string;
   unit: string;
@@ -65,12 +66,31 @@ export interface IGraph {
   detail: string | null;
 }
 
-export interface IEvent {
-  _id: string;
-  trigger_id: string;
-  status: string;
-  message: string;
-  timestamp: string;
-  createdAt: string;
-  updatedAt: string;
+export interface ITrigger {
+  trigger_name: string;
+  enabled: boolean;
+  severity: string;
+  valuetrigger: number;
+  comparisonOperator: string;
+  createAt: string;
 }
+
+export interface DataEntry {
+  timestamp: string;
+  value: string;
+  Change_per_second: string;
+}
+
+export interface ITrigger {
+  _id: string;
+  trigger_name: string;
+  host_id: string;
+  hostname?: string;
+  severity: string;
+  valuetrigger: number;
+  ComparisonOperator: string;
+  createdAt: string;
+  enabled: boolean;
+}
+
+

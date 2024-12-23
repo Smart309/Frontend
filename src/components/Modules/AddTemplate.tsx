@@ -20,7 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 interface TemplateItems {
   id: number;
-  name_item: string;
+  item_name: string;
   oid: string;
   type: string;
   unit: string;
@@ -40,7 +40,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
   const [itemRows, setItemRows] = useState<TemplateItems[]>([
     {
       id: 1,
-      name_item: "",
+      item_name: "",
       oid: "",
       type: "",
       unit: "",
@@ -60,7 +60,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
       setItemRows([
         {
           id: 1,
-          name_item: "",
+          item_name: "",
           oid: "",
           type: "",
           unit: "",
@@ -103,7 +103,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
       // Only add items array if there are non-empty items
       const filledItems = itemRows.filter(
         (item) =>
-          item.name_item.trim() ||
+          item.item_name.trim() ||
           item.oid.trim() ||
           item.type.trim() ||
           item.unit.trim()
@@ -111,7 +111,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
 
       if (filledItems.length > 0) {
         requestBody.items = filledItems.map((item) => ({
-          name_item: item.name_item,
+          item_name: item.item_name,
           oid: item.oid,
           type: item.type,
           unit: item.unit,
@@ -150,7 +150,7 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
   const handleAddRow = () => {
     const newRow: TemplateItems = {
       id: itemRows.length + 1,
-      name_item: "",
+      item_name: "",
       oid: "",
       type: "",
       unit: "",
@@ -287,9 +287,9 @@ const AddTemplate: React.FC<AddTemplateProps> = ({ onClose }) => {
                     <TableCell>
                       <TextField
                         {...textFieldProps}
-                        value={row.name_item}
+                        value={row.item_name}
                         onChange={(e) =>
-                          handleItemChange(row.id, "name_item", e.target.value)
+                          handleItemChange(row.id, "item_name", e.target.value)
                         }
                       />
                     </TableCell>
