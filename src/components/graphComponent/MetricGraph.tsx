@@ -52,7 +52,7 @@ interface MetricGraphProps {
 }
 
 const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
-  const [timeRange, setTimeRange] = useState<string>("2hr");
+  const [timeRange, setTimeRange] = useState<string>("10min");
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [
@@ -71,17 +71,41 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
     ],
   });
 
-  // Calculate fixed min and max for stable Y axis
+  const getAxisInterval = (range: number): number => {
+    // Get the order of magnitude of the range
+    const magnitude = Math.floor(Math.log10(range));
+    const baseInterval = Math.pow(10, magnitude);
+    
+    // Choose appropriate interval based on range within the order of magnitude
+    if (range / baseInterval <= 2) return baseInterval / 5;
+    if (range / baseInterval <= 5) return baseInterval / 2;
+    return baseInterval;
+  };
+  
+  const roundToInterval = (value: number, interval: number, roundUp: boolean): number => {
+    if (roundUp) {
+      return Math.ceil(value / interval) * interval;
+    }
+    return Math.floor(value / interval) * interval;
+  };
+  
   const getYAxisMinMax = (data: DataEntry[]) => {
-    const Change_per_seconds = data.map((entry) =>
-      Number(entry.Change_per_second)
-    );
-    const min = Math.min(...Change_per_seconds);
-    const max = Math.max(...Change_per_seconds);
-    const padding = (max - min) * 0.1; // Add 10% padding
+    const Change_per_seconds = data.map((entry) => Number(entry.Change_per_second));
+    let min = Math.min(...Change_per_seconds);
+    let max = Math.max(...Change_per_seconds);
+    
+    // Add padding (10%)
+    const range = max - min;
+    const padding = range * 0.1;
+    min = Math.max(0, min - padding);
+    max = max + padding;
+    
+    // Calculate appropriate interval based on the range
+    const interval = getAxisInterval(max - min);
+    
     return {
-      min: Math.max(0, min - padding),
-      max: max + padding,
+      min: roundToInterval(min, interval, false), // Round down
+      max: roundToInterval(max, interval, true)   // Round up
     };
   };
 
