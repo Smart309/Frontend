@@ -13,6 +13,7 @@ import {
 import { Box } from "@mui/system";
 import { Pencil, Trash2 } from "lucide-react";
 import useWindowSize from "../hooks/useWindowSize";
+import ManageComponent from "../components/ManageComponent";
 
 interface DeviceDetails {
   location: string;
@@ -121,92 +122,32 @@ const Management: React.FC = () => {
           display: "flex",
         }}
       >
-        <Paper
+         <Box
           sx={{
-            mt: 2,
-            p: 2,
-            maxWidth: "100%", // Limit maximum width
-            mx: "auto", // Center horizontally
-            width: "100%", // Take full width up to maxWidth
+            backgroundColor: "#FFFFFB",
+            flex: 1,
+            display: "flex",
+            borderRadius: 3,
+            flexDirection: "column",
+            justifyContent: windowSize.width >= 1100 ? "center" : "start",
+            alignItems: "center",
+            minHeight: "fit-content",
+            py: 3,
+            px: 3,
           }}
         >
-          {/* Header Row */}
-          <Grid container spacing={2} sx={{ mb: 2, fontWeight: "bold" }}>
-            {columns.map((column) => (
-              <Grid
-                item
-                xs={
-                  column.field === "_id"
-                    ? 3
-                    : column.field === "ip_address" ||
-                      column.field === "actions"
-                    ? 2
-                    : 2.3
-                }
-                key={column.field}
-              >
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {column.label}
-                </Typography>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* Data Rows */}
-          {loading ? (
-            <Typography>Loading...</Typography>
-          ) : (
-            devices.map((device) => (
-              <Grid
-                container
-                spacing={2}
-                key={device._id}
-                sx={{
-                  py: 2,
-                  borderBottom: "1px solid #eee",
-                  "&:hover": {
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-              >
-                <Grid item xs={2.3} sx={{}}>
-                  <Typography>{device.hostname}</Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <Typography>{device.ip_address}</Typography>
-                </Grid>
-                <Grid item xs={2.3}>
-                  <Typography>{device.details.location}</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography>{device._id}</Typography>
-                </Grid>
-                <Grid item xs={2} sx={{ display: "flex", gap: 1 }}>
-                  <IconButton
-                    onClick={() => handleEdit(device._id)}
-                    size="small"
-                    sx={{
-                      color: "orange",
-                      "&:hover": { backgroundColor: "yellow" },
-                    }}
-                  >
-                    <Pencil size={18} />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDelete(device._id)}
-                    size="small"
-                    sx={{
-                      color: "error.main",
-                      "&:hover": { backgroundColor: "error.light" },
-                    }}
-                  >
-                    <Trash2 size={18} />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            ))
+          {windowSize.width < 1100 && (
+            <Typography
+              align="center"
+              sx={{
+                color: "#242D5D",
+                fontWeight: 400,
+                fontSize: 25,
+              }}
+            />
           )}
-        </Paper>
+          <ManageComponent />
+        </Box>
       </Box>
     </>
   );

@@ -81,3 +81,16 @@ export interface DataEntry {
   Change_per_second: string;
 }
 
+export interface ITrigger {
+  _id: string;
+  trigger_name: string;
+  host_id: string;
+  hostname?: string;
+  severity: string;
+  valuetrigger: number;
+  ComparisonOperator: string;
+  createdAt: string;
+  enabled: boolean;
+}
+
+
