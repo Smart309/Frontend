@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  FormControl,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Box, FormControl, Select, MenuItem } from "@mui/material";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -16,10 +11,12 @@ import {
   Tooltip,
   Legend,
   ChartData,
-  ChartOptions
+  ChartOptions,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { enUS } from "date-fns/locale";
+import { DataEntry } from "../../interface/InterfaceCollection";
+import { Item } from "../../interface/InterfaceCollection";
 
 ChartJS.register(
   TimeScale,
@@ -31,56 +28,60 @@ ChartJS.register(
   Legend
 );
 
-export interface DataEntry {
-  timestamp: string;
-  value: string;
-  Change_per_second: string;
-}
+// export interface DataEntry {
+//   timestamp: string;
+//   value: string;
+//   Change_per_second: string;
+// }
 
-export interface ItemId {
-  _id: string;
-  name_item: string;
-  oid: string;
-  type: string;
-  unit: string;
-}
+// export interface ItemId {
+//   _id: string;
+//   item_name: string;
+//   oid: string;
+//   type: string;
+//   unit: string;
+// }
 
-export interface Item {
-  item_id: ItemId;
+export interface Items {
+  item_id: Item;
   data: DataEntry[];
 }
 
 interface MetricGraphProps {
-  item: Item;
+  item: Items;
 }
 
 const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
   const [timeRange, setTimeRange] = useState<string>("2hr");
-  const [chartData, setChartData] = useState<ChartData<'line'>>({
+  const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
-    datasets: [{
-      label: '',
-      data: [],
-      borderColor: "rgb(75, 192, 192)",
-      backgroundColor: "rgba(75, 192, 192, 0.5)",
-      tension: 0.1,
-      borderWidth: 2,
-      pointRadius: 1,
-      pointHoverRadius: 4,
-      fill: false,
-      showLine: true,
-    }]
+    datasets: [
+      {
+        label: "",
+        data: [],
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        tension: 0.1,
+        borderWidth: 2,
+        pointRadius: 1,
+        pointHoverRadius: 4,
+        fill: false,
+        showLine: true,
+      },
+    ],
   });
 
   // Calculate fixed min and max for stable Y axis
   const getYAxisMinMax = (data: DataEntry[]) => {
-    const Change_per_seconds = data.map(entry => Number(entry.Change_per_second));
+    const Change_per_seconds = data.map((entry) =>
+      Number(entry.Change_per_second)
+    );
     const min = Math.min(...Change_per_seconds);
     const max = Math.max(...Change_per_seconds);
     const padding = (max - min) * 0.1; // Add 10% padding
     return {
       min: Math.max(0, min - padding),
-      max: max + padding
+      max: max + padding,
     };
   };
 
@@ -128,11 +129,11 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
   // Get Y-axis limits once when component mounts
   const yAxisLimits = React.useMemo(() => getYAxisMinMax(item.data), []);
 
-  const options: ChartOptions<'line'> = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: 0
+      duration: 0,
     },
     interaction: {
       mode: "index",
@@ -144,9 +145,9 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
       },
       title: {
         display: true,
-        text: `${item.item_id.name_item} (${item.item_id.unit}/s)`, // Updated title to include /s
+        text: `${item.item_id.item_name} (${item.item_id.unit}/s)`, // Updated title to include /s
         padding: {
-          top: 20  // This is equivalent to mt-5 in most cases
+          top: 20, // This is equivalent to mt-5 in most cases
         },
         font: {
           size: 16,
@@ -165,8 +166,8 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
         padding: 10,
         displayColors: true,
         callbacks: {
-          label: function(context: any) {
-            return `${item.item_id.name_item}: ${context.parsed.y} ${item.item_id.unit}/s`; // Updated tooltip to include /s
+          label: function (context: any) {
+            return `${item.item_id.item_name}: ${context.parsed.y} ${item.item_id.unit}/s`; // Updated tooltip to include /s
           },
         },
       },
@@ -210,21 +211,28 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
     const timeSettings = getTimeRangeSettings(timeRange);
     const filteredData = item.data.filter((entry) => {
       const timestamp = new Date(entry.timestamp).getTime();
-      return timestamp >= timeSettings.startTime && timestamp <= timeSettings.endTime;
+      return (
+        timestamp >= timeSettings.startTime && timestamp <= timeSettings.endTime
+      );
     });
 
     const sortedData = filteredData.sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
-    const labels = sortedData.map((entry) => new Date(entry.timestamp).getTime());
-    const Change_per_seconds = sortedData.map((entry) => Number(entry.Change_per_second));
+    const labels = sortedData.map((entry) =>
+      new Date(entry.timestamp).getTime()
+    );
+    const Change_per_seconds = sortedData.map((entry) =>
+      Number(entry.Change_per_second)
+    );
 
     setChartData({
       labels,
       datasets: [
         {
-          label: item.item_id.name_item,
+          label: item.item_id.item_name,
           data: Change_per_seconds,
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgba(75, 192, 192, 0.5)",
@@ -241,24 +249,25 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
 
   return (
     <Box sx={{ position: "relative" }}>
-      <Box sx={{ 
-        position: "absolute", 
-        right: 0, 
-        top: 0, 
-        zIndex: 1,
-        p: 2
-      }}>
+      <Box
+        sx={{
+          position: "absolute",
+          right: 0,
+          top: 0,
+          zIndex: 1,
+          p: 2,
+        }}
+      >
         <FormControl size="small">
           <Select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            sx={{ 
+            sx={{
               minWidth: 120,
               backgroundColor: "white",
               "& .MuiSelect-select": {
                 fontSize: 14,
-              
-              }
+              },
             }}
           >
             <MenuItem value="10min">10 minutes</MenuItem>
@@ -271,13 +280,15 @@ const MetricGraph: React.FC<MetricGraphProps> = ({ item }) => {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ 
-        height: "400px", 
-        pt: 6,
-        "& canvas": {
-          height: "400px !important"  // Force consistent height
-        }
-      }}>
+      <Box
+        sx={{
+          height: "400px",
+          pt: 6,
+          "& canvas": {
+            height: "400px !important", // Force consistent height
+          },
+        }}
+      >
         <Line options={options} data={chartData} />
       </Box>
     </Box>

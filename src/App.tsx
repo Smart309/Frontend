@@ -72,7 +72,6 @@
 
 // export default App;
 
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -96,7 +95,6 @@ import Templates from "./pages/Template";
 import Login from "./pages/Login";
 import Event from "./pages/Event";
 import Trigger from "./pages/Trigger";
-
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -131,10 +129,10 @@ const App = () => {
             <Route path="/graphs" element={<Graphs />} />
             <Route path="/storage" element={<Storage />} />
             <Route path="/management" element={<Management />} />
-            <Route path="/alerts" element={<Alerts />} />
+            {/* <Route path="/alerts" element={<Alerts />} /> */}
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/devices" element={<Devices />} />
-            <Route path="/devicedetail/:serialNo" element={<DeviceDetail />} />
+            <Route path="/devicedetail/:_id" element={<DeviceDetail />} />
             <Route path="/templates" element={<Templates />} />
             <Route path="/trigger" element={<Trigger />} />
             <Route path="/event" element={<Event />} />

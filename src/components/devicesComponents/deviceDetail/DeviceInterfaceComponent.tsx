@@ -1,5 +1,5 @@
 import { Grid, Box, Typography } from "@mui/material";
-import { Item } from "../../../interface/IDevice"; // Update the path accordingly
+import { Item } from "../../../interface/InterfaceCollection"; // Update the path accordingly
 
 const DeviceInterfaceComponent = ({ items }: { items: Item[] }) => {
   return (
@@ -15,7 +15,7 @@ const DeviceInterfaceComponent = ({ items }: { items: Item[] }) => {
             }}
           >
             <Typography variant="h6" fontWeight={600}>
-              {item.name_item}
+              {item.item_name}
             </Typography>
             <Typography>OID: {item.oid}</Typography>
             <Typography>Type: {item.type}</Typography>

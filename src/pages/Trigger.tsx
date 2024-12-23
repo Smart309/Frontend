@@ -1,4 +1,3 @@
-import AlertsComponent from "../components/AlertsComponent";
 import TriggerComponent from "../components/TriggerComponent";
 import useWindowSize from "../hooks/useWindowSize";
 import { Box, Typography, Button, Dialog, DialogContent } from "@mui/material";

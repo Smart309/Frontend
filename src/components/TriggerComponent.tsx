@@ -11,8 +11,10 @@ import {
   Typography,
   CircularProgress,
   Divider,
+  IconButton,
 } from "@mui/material";
 import axios from "axios";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface ITrigger {
   _id: string;
@@ -35,8 +37,18 @@ interface GroupedTriggers {
 
 const formatDate = (date: string | Date) => {
   const englishMonths = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const dateObj = typeof date === "string" ? new Date(date) : date;
@@ -59,13 +71,17 @@ const TriggerComponent = () => {
       const triggersData = response.data.triggers;
 
       // Get unique host IDs
-      const hostIds = [...new Set(triggersData.map((trigger: ITrigger) => trigger.host_id))];
+      const hostIds = [
+        ...new Set(triggersData.map((trigger: ITrigger) => trigger.host_id)),
+      ];
 
       // Fetch host information for each unique host ID
       const hostsInfo = await Promise.all(
         hostIds.map(async (hostId) => {
           try {
-            const hostResponse = await axios.get(`http://127.0.0.1:3000/host/${hostId}`);
+            const hostResponse = await axios.get(
+              `http://127.0.0.1:3000/host/${hostId}`
+            );
             return hostResponse.data.data;
           } catch (error) {
             console.error(`Error fetching host info for ${hostId}:`, error);
@@ -83,20 +99,23 @@ const TriggerComponent = () => {
       }, {} as Record<string, string>);
 
       // Group triggers by host_id
-      const grouped = triggersData.reduce((acc: GroupedTriggers, trigger: ITrigger) => {
-        const hostname = hostMap[trigger.host_id] || 'Unknown Host';
-        if (!acc[trigger.host_id]) {
-          acc[trigger.host_id] = {
+      const grouped = triggersData.reduce(
+        (acc: GroupedTriggers, trigger: ITrigger) => {
+          const hostname = hostMap[trigger.host_id] || "Unknown Host";
+          if (!acc[trigger.host_id]) {
+            acc[trigger.host_id] = {
+              hostname,
+              triggers: [],
+            };
+          }
+          acc[trigger.host_id].triggers.push({
+            ...trigger,
             hostname,
-            triggers: []
-          };
-        }
-        acc[trigger.host_id].triggers.push({
-          ...trigger,
-          hostname
-        });
-        return acc;
-      }, {});
+          });
+          return acc;
+        },
+        {}
+      );
 
       setGroupedTriggers(grouped);
       setLoading(false);
@@ -113,7 +132,14 @@ const TriggerComponent = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "200px",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -124,87 +150,141 @@ const TriggerComponent = () => {
   }
 
   return (
-    <Box>
-      {Object.entries(groupedTriggers).map(([hostId, { hostname, triggers }]) => (
-        <Box key={hostId} sx={{ mb: 4 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              backgroundColor: '#242D5D',
-              color: 'white',
-              p: 2,
-              borderRadius: '4px 4px 0 0',
-            }}
-          >
-            {hostname}
-          </Typography>
-          <TableContainer
-            component={Paper}
-            sx={{
-              boxShadow: "none",
-              "& .MuiPaper-root": { boxShadow: "none" },
-              backgroundColor: "transparent",
-              mb: 2,
-            }}
-          >
-            <Table
+    <Box sx={{ width: 1 }}>
+      {Object.entries(groupedTriggers).map(
+        ([hostId, { hostname, triggers }]) => (
+          <Box key={hostId} sx={{ mb: 4 }}>
+            <Typography
+              variant="h6"
               sx={{
-                "& .MuiTable-root": { borderCollapse: "separate", borderSpacing: 0 },
-                "& .MuiTableCell-root": { borderBottom: "none" },
-                "& .MuiTableBody-root .MuiTableRow-root": {
-                  "&:nth-of-type(even)": { backgroundColor: "white" },
-                  "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
-                  "&:hover": {
-                    backgroundColor: "#FFF3E0",
-                    transition: "background-color 0.3s ease",
-                    cursor: "pointer",
-                  },
-                },
+                backgroundColor: "#242D5D",
+                color: "white",
+                p: 2,
+                borderRadius: "4px 4px 0 0",
               }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontSize: "1.1rem", fontWeight: "medium" }}>
-                    Trigger Name
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "1.1rem", fontWeight: "medium" }}>
-                    Severity
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontSize: "1.1rem", fontWeight: "medium" }}>
-                    Trigger Value
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontSize: "1.1rem", fontWeight: "medium" }}>
-                    Comparison Operator
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontSize: "1.1rem", fontWeight: "medium" }}>
-                    Created At
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {triggers.map((trigger) => (
-                  <TableRow key={trigger._id}>
-                    <TableCell>{trigger.trigger_name}</TableCell>
-                    <TableCell>
-                      <Typography
-                        sx={{
-                          color: trigger.severity === 'critical' ? 'red' : 'orange',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        {trigger.severity}
-                      </Typography>
+              {hostname}
+            </Typography>
+            <TableContainer
+              component={Paper}
+              sx={{
+                boxShadow: "none",
+                "& .MuiPaper-root": { boxShadow: "none" },
+                backgroundColor: "transparent",
+                mb: 2,
+              }}
+            >
+              <Table
+                sx={{
+                  "& .MuiTable-root": {
+                    borderCollapse: "separate",
+                    borderSpacing: 0,
+                  },
+                  "& .MuiTableCell-root": { borderBottom: "none" },
+                  "& .MuiTableBody-root .MuiTableRow-root": {
+                    "&:nth-of-type(even)": { backgroundColor: "white" },
+                    "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
+                    "&:hover": {
+                      backgroundColor: "#FFF3E0",
+                      transition: "background-color 0.3s ease",
+                      cursor: "pointer",
+                    },
+                  },
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Trigger Name
                     </TableCell>
-                    <TableCell align="center">{trigger.valuetrigger}</TableCell>
-                    <TableCell align="center">{trigger.ComparisonOperator}</TableCell>
-                    <TableCell align="center">{formatDate(trigger.createdAt)}</TableCell>
+                    <TableCell
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Severity
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Comparison Operator
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Trigger Value
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Created At
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ fontSize: "1.1rem", fontWeight: "medium" }}
+                    >
+                      Action
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      ))}
+                </TableHead>
+                <TableBody>
+                  {triggers.map((trigger) => (
+                    <TableRow key={trigger._id}>
+                      <TableCell>{trigger.trigger_name}</TableCell>
+                      <TableCell>
+                        <Typography
+                          sx={{
+                            color:
+                              trigger.severity === "critical"
+                                ? "red"
+                                : "orange",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {trigger.severity}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        {trigger.ComparisonOperator}
+                      </TableCell>
+                      <TableCell align="center">
+                        {trigger.valuetrigger}
+                      </TableCell>
+
+                      <TableCell align="center">
+                        {formatDate(trigger.createdAt)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          sx={{
+                            color: "orange",
+                            "&:hover": { backgroundColor: "yellow" },
+                          }}
+                        >
+                          <Pencil size={18} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          sx={{
+                            color: "error.main",
+                            "&:hover": { backgroundColor: "error.light" },
+                          }}
+                        >
+                          <Trash2 size={18} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )
+      )}
       {Object.keys(groupedTriggers).length === 0 && (
         <Typography align="center" sx={{ mt: 2 }}>
           No triggers found

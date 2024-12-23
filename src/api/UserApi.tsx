@@ -1,11 +1,9 @@
 import axios from "axios";
-import { IUser } from "../interface/IDevice";
+import { IUser } from "../interface/InterfaceCollection";
 
 const getUserData = async (): Promise<IUser[]> => {
   try {
-    const response = await axios.get<IUser[]>(
-      "http://localhost:3000/getUser"
-    );
+    const response = await axios.get<IUser[]>("http://localhost:3000/getUser");
     return response.data;
   } catch (error) {
     console.error("Error fetching User data:", error);

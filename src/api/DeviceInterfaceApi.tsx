@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IInterface } from "../interface/IDevice";
+import { IInterface } from "../interface/InterfaceCollection";
 
 const getDeviceINT = async (): Promise<IInterface[]> => {
   try {

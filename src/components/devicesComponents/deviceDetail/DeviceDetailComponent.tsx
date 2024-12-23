@@ -1,9 +1,9 @@
 import { Grid, Typography } from "@mui/material";
-import { IDevice } from "../../../interface/IDevice"; // Update the path accordingly
+import { IDevice } from "../../../interface/InterfaceCollection"; // Update the path accordingly
 
 const DeviceDetailComponent = ({ deviceData }: { deviceData: IDevice }) => {
   const deviceDetails = deviceData.details; // Extracting the DeviceDetails from the deviceData object
-  
+
   return (
     <Grid container spacing={3}>
       {/* Basic Information Section */}
@@ -17,7 +17,7 @@ const DeviceDetailComponent = ({ deviceData }: { deviceData: IDevice }) => {
         <Typography>SNMP Version: {deviceData.snmp_version}</Typography>
         <Typography>SNMP Port: {deviceData.snmp_port}</Typography>
       </Grid>
-      
+
       {/* Device Details Section */}
       <Grid item xs={12} md={6}>
         <Typography variant="h6" fontWeight={600} gutterBottom>

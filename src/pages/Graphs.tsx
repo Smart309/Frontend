@@ -10,9 +10,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import MetricGraph, {
-  Item,
-  ItemId,
-  DataEntry,
+  Items,
 } from "../components/graphComponent/MetricGraph";
 
 interface HostId {
@@ -22,7 +20,7 @@ interface HostId {
 
 interface Host {
   _id: HostId;
-  items: Item[];
+  items: Items[];
 }
 
 interface ApiResponse {
@@ -44,8 +42,8 @@ const Graphs = () => {
         if (result.status === "success") {
           const sortedData = result.data.map((host: Host) => ({
             ...host,
-            items: [...host.items].sort((a: Item, b: Item) =>
-              a.item_id.name_item.localeCompare(b.item_id.name_item)
+            items: [...host.items].sort((a: Items, b: Items) =>
+              a.item_id.item_name.localeCompare(b.item_id.item_name)
             ),
           }));
 
@@ -72,8 +70,8 @@ const Graphs = () => {
 
   const sortedItems = React.useMemo(() => {
     if (!selectedHostData?.items) return [];
-    return [...selectedHostData.items].sort((a: Item, b: Item) =>
-      a.item_id.name_item.localeCompare(b.item_id.name_item)
+    return [...selectedHostData.items].sort((a: Items, b: Items) =>
+      a.item_id.item_name.localeCompare(b.item_id.item_name)
     );
   }, [selectedHostData]);
 
@@ -103,8 +101,8 @@ const Graphs = () => {
         </Box>
 
         <Grid container spacing={3}>
-          {sortedItems.map((item: Item) => (
-            <Grid item xs={12} key={item.item_id.name_item}>
+          {sortedItems.map((item: Items) => (
+            <Grid item xs={12} key={item.item_id.item_name}>
               <Paper
                 elevation={3}
                 sx={{

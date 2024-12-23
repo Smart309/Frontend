@@ -40,7 +40,7 @@
 
 // interface ItemId {
 //   _id: string;
-//   name_item: string;
+//   item_name: string;
 //   oid: string;
 //   type: string;
 //   unit: string;
@@ -233,7 +233,7 @@
 //         if (result.status === "success") {
 //           const host = result.data[0];
 //           const outPktsItem = host.items.find(
-//             (item) => item.item_id.name_item === "snmpOutPkts"
+//             (item) => item.item_id.item_name === "snmpOutPkts"
 //           );
 
 //           if (outPktsItem && outPktsItem.data.length > 0) {

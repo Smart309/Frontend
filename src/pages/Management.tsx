@@ -25,7 +25,7 @@ interface DeviceDetails {
 }
 
 interface Item {
-  name_item: string;
+  item_name: string;
   oid: string;
   type: string;
   unit: string;

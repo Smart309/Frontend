@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getDeviceData } from "../api/DeviceDetailApi";
-import { IDevice } from "../interface/IDevice";
+import { IDevice } from "../interface/InterfaceCollection";
 
 const ManageComponent = () => {
   const [devices, setDevices] = useState<IDevice[]>([]);
@@ -48,23 +48,23 @@ const ManageComponent = () => {
     <TableContainer
       component={Paper}
       sx={{
-        boxShadow: 'none',
-        '& .MuiPaper-root': { boxShadow: 'none' },
-        backgroundColor: 'transparent'
+        boxShadow: "none",
+        "& .MuiPaper-root": { boxShadow: "none" },
+        backgroundColor: "transparent",
       }}
     >
       <Table
         sx={{
           minWidth: 650,
-          '& .MuiTable-root': { borderCollapse: 'separate', borderSpacing: 0 },
-          '& .MuiTableCell-root': { borderBottom: 'none' },
-          '& .MuiTableBody-root .MuiTableRow-root': {
-            '&:nth-of-type(even)': { backgroundColor: 'white' },
-            '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' },
-            '&:hover': {
-              backgroundColor: '#FFF3E0',
-              transition: 'background-color 0.3s ease',
-              cursor: 'pointer',
+          "& .MuiTable-root": { borderCollapse: "separate", borderSpacing: 0 },
+          "& .MuiTableCell-root": { borderBottom: "none" },
+          "& .MuiTableBody-root .MuiTableRow-root": {
+            "&:nth-of-type(even)": { backgroundColor: "white" },
+            "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" },
+            "&:hover": {
+              backgroundColor: "#FFF3E0",
+              transition: "background-color 0.3s ease",
+              cursor: "pointer",
             },
           },
         }}
@@ -72,16 +72,36 @@ const ManageComponent = () => {
       >
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Vendor</TableCell>
-            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Name</TableCell>
-            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>Location</TableCell>
-            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}>MAC address</TableCell>
-            <TableCell align="center" sx={{ fontSize: '1.2rem', fontWeight: 'medium' }}></TableCell>
+            <TableCell sx={{ fontSize: "1.2rem", fontWeight: "medium" }}>
+              Vendor
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              Name
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              Location
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            >
+              MAC address
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ fontSize: "1.2rem", fontWeight: "medium" }}
+            ></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {devices.map((device) => (
-            <TableRow key={device.DMACaddress} sx={{ cursor: 'pointer' }}>
+            <TableRow key={device.DMACaddress} sx={{ cursor: "pointer" }}>
               <TableCell component="th" scope="row">
                 {device.vendor}
               </TableCell>
@@ -91,8 +111,8 @@ const ManageComponent = () => {
               <TableCell align="center">
                 <IconButton
                   sx={{
-                    '&:focus': {
-                      outline: 'none',
+                    "&:focus": {
+                      outline: "none",
                     },
                   }}
                   aria-label="edit"
@@ -105,8 +125,8 @@ const ManageComponent = () => {
                 </IconButton>
                 <IconButton
                   sx={{
-                    '&:focus': {
-                      outline: 'none',
+                    "&:focus": {
+                      outline: "none",
                     },
                   }}
                   aria-label="delete"

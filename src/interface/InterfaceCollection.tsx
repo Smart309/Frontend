@@ -22,7 +22,8 @@ export interface DeviceDetails {
 }
 
 export interface Item {
-  name_item: string;
+  _id: string;
+  item_name: string;
   oid: string;
   type: string;
   unit: string;
@@ -65,7 +66,6 @@ export interface IGraph {
   detail: string | null;
 }
 
-
 export interface ITrigger {
   trigger_name: string;
   enabled: boolean;
@@ -74,3 +74,10 @@ export interface ITrigger {
   comparisonOperator: string;
   createAt: string;
 }
+
+export interface DataEntry {
+  timestamp: string;
+  value: string;
+  Change_per_second: string;
+}
+

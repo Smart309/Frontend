@@ -65,7 +65,7 @@ interface DeviceDetails {
 
 interface DeviceItems {
   id: number;
-  name_item: string;
+  item_name: string;
   oid: string;
   type: string;
   unit: string;
@@ -75,7 +75,7 @@ interface DeviceItems {
 }
 
 interface TemplateItem {
-  name_item: string;
+  item_name: string;
   type: string;
   unit: string;
   _id: string;
@@ -119,7 +119,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       // Convert template items to the DeviceItems format
       const newItems = selectedTemplate.items.map((item, index) => ({
         id: index + 1,
-        name_item: item.name_item,
+        item_name: item.item_name,
         oid: item.oid || "",
         type: item.type,
         unit: item.unit,
@@ -134,7 +134,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       setItemRows([
         {
           id: 1,
-          name_item: "",
+          item_name: "",
           oid: "",
           type: "",
           unit: "",
@@ -164,7 +164,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const [itemRows, setItemRows] = useState<DeviceItems[]>([
     {
       id: 1,
-      name_item: "",
+      item_name: "",
       oid: "",
       type: "",
       unit: "",
@@ -177,7 +177,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
   const handleAddRow = () => {
     const newRow: DeviceItems = {
       id: itemRows.length + 1,
-      name_item: "",
+      item_name: "",
       oid: "",
       type: "",
       unit: "",
@@ -238,7 +238,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
 
       // Only add items to request if they have data
       const filledItems = itemRows.filter(
-        (item) => item.name_item || item.oid || item.type || item.unit
+        (item) => item.item_name || item.oid || item.type || item.unit
       );
 
       if (filledItems.length > 0) {
@@ -279,7 +279,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
       setItemRows([
         {
           id: 1,
-          name_item: "",
+          item_name: "",
           oid: "",
           type: "",
           unit: "",
@@ -335,7 +335,7 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
         const interfaceItems = response.data.data.map(
           (item: any, index: number) => ({
             id: index + 1,
-            name_item: item.name_item || "",
+            item_name: item.item_name || "",
             oid: item.oid || "",
             type: item.type || "",
             unit: item.unit || "",
@@ -787,11 +787,11 @@ const AddDevice: React.FC<AddDeviceProps> = ({ onClose }) => {
                         <TableCell>
                           <TextField
                             {...textFieldProps}
-                            value={row.name_item}
+                            value={row.item_name}
                             onChange={(e) =>
                               handleItemChange(
                                 row.id,
-                                "name_item",
+                                "item_name",
                                 e.target.value
                               )
                             }

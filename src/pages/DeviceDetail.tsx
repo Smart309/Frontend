@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Divider, Button } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { IDevice } from "../interface/IDevice";
+import { IDevice } from "../interface/InterfaceCollection";
 import { getDeviceData } from "../api/DeviceDetailApi";
-import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent";  // Updated import
+import DeviceDetailComponent from "../components/devicesComponents/deviceDetail/DeviceDetailComponent"; // Updated import
 import DeviceInterfaceComponent from "../components/devicesComponents/deviceDetail/DeviceInterfaceComponent";
 import useWindowSize from "../hooks/useWindowSize";
 
@@ -23,8 +23,9 @@ const DeviceDetailPage = () => {
         try {
           const allDevices = await getDeviceData();
           setDeviceData(
-            allDevices.find((d) => d.hostname === location.state?.device?.DName) ||
-              null
+            allDevices.find(
+              (d) => d.hostname === location.state?.device?.DName
+            ) || null
           );
         } catch (error) {
           if (error instanceof Error) {

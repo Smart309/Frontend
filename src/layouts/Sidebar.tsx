@@ -13,8 +13,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useLocation } from "react-router-dom";
 import useWindowSize from "../hooks/useWindowSize";
 import DevicesIcon from "@mui/icons-material/Devices";
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
-import EventIcon from '@mui/icons-material/Event';
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import EventIcon from "@mui/icons-material/Event";
 
 interface SidebarProps {
   isHideSidebar: boolean;
@@ -76,7 +76,7 @@ export const SlideBarItems = [
     id: 6,
     icon: <ErrorIcon sx={{ fontSize: 22 }} />,
     name: "Alerts",
-    path: "/alerts",
+    // path: "/alerts",
     newIcon: "",
     subItems: [
       {
@@ -110,37 +110,25 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
   const location = useLocation();
   const [expandedItem, setExpandedItem] = useState<number | null>(
     location.pathname.includes("/devices") ||
-    location.pathname.includes("/templates") ||
-    location.pathname.includes("/alerts")
+      location.pathname.includes("/templates") ||
+      location.pathname.includes("/alerts")
       ? 1
       : null
   );
 
   const handleItemClick = (item: any) => {
-    if (item.id === 6) {  
-      handleItemClickAlert(item);
-    } else {
       if (item.subItems) {
         if (expandedItem === item.id) {
           setExpandedItem(null);
         } else {
           setExpandedItem(item.id);
-          navigate(item.subItems[0].path); 
+          navigate(item.subItems[0].path);
         }
       } else {
         setExpandedItem(null);
         navigate(item.path);
       }
-    }
-  };
-
-  const handleItemClickAlert = (item: any) => {
-    if (expandedItem === item.id) {
-      setExpandedItem(null);  
-    } else {
-      setExpandedItem(item.id);  
-    }
-    navigate(item.path);
+    
   };
 
   return (
@@ -160,24 +148,33 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               backgroundColor:
                 location.pathname === item.path ||
                 item.subItems?.some((sub) => sub.path === location.pathname) ||
-                (item.id === 6 && expandedItem === item.id) 
+                (item.id === 6 && expandedItem === item.id)
                   ? "#F25A28"
                   : "transparent",
               color:
                 location.pathname === item.path ||
                 item.subItems?.some((sub) => sub.path === location.pathname) ||
-                (item.id === 6 && expandedItem === item.id) 
+                (item.id === 6 && expandedItem === item.id)
                   ? "#FFFFFB"
                   : "#242D5D",
               transition: "background-color 0.3s ease",
             }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                position: "relative",
+              }}
             >
-            <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
               {item.icon}
               <Box
                 sx={{
                   overflow: "hidden",
-                  maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
+                  maxWidth:
+                    !isHideSidebar && windowSize.width >= 1100
+                      ? "200px"
+                      : "0px",
                   transition: "max-width 0.5s ease",
                 }}
               >
@@ -204,7 +201,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
               ) : (
                 <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />
               ))}
-            </Box>
+          </Box>
 
           {/* Sub-items */}
           {item.subItems &&
@@ -217,7 +214,7 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                     key={subItem.id}
                     onClick={() => {
                       navigate(subItem.path);
-                      setExpandedItem(item.id); 
+                      setExpandedItem(item.id);
                     }}
                     sx={{
                       mt: 1,
@@ -229,19 +226,29 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                       ml: "50px",
                       backgroundColor:
                         location.pathname === subItem.path ||
-                        (expandedItem === 6 && location.pathname.includes("/alerts"))
+                        (expandedItem === 6 &&
+                          location.pathname.includes("/alerts"))
                           ? "transparent"
                           : "transparent",
 
                       "&:hover": {
-                        backgroundColor: location.pathname !== subItem.path ? "#FFEAE3" : "#FFEAE3",
+                        backgroundColor:
+                          location.pathname !== subItem.path
+                            ? "#FFEAE3"
+                            : "#FFEAE3",
                       },
                       transition: "background-color 0.3s ease",
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        position: "relative",
+                      }}
+                    >
                       {subItem.icon}
-                      {location.pathname.includes(subItem.path) && ( 
+                      {location.pathname.includes(subItem.path) && (
                         <Box
                           sx={{
                             position: "absolute",
@@ -254,11 +261,14 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                             backgroundColor: "#FF5722",
                           }}
                         />
-                        )}
+                      )}
                       <Box
                         sx={{
                           overflow: "hidden",
-                          maxWidth: !isHideSidebar && windowSize.width >= 1100 ? "200px" : "0px",
+                          maxWidth:
+                            !isHideSidebar && windowSize.width >= 1100
+                              ? "200px"
+                              : "0px",
                           transition: "max-width 0.5s ease",
                         }}
                       >
@@ -269,7 +279,10 @@ export default function Sidebar({ isHideSidebar }: SidebarProps) {
                             fontWeight: 500,
                             paddingRight: 1,
                             whiteSpace: "nowrap",
-                            opacity: !isHideSidebar && windowSize.width >= 1100 ? 1 : 0,
+                            opacity:
+                              !isHideSidebar && windowSize.width >= 1100
+                                ? 1
+                                : 0,
                             transition: "opacity 0.5s ease",
                           }}
                         >
