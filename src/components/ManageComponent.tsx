@@ -482,6 +482,7 @@ const ManageComponent = () => {
           <Button
             onClick={() => setEditDialogOpen(false)}
             disabled={formLoading}
+            sx={{ color: "black" }}
           >
             Cancel
           </Button>
